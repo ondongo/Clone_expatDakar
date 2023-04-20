@@ -1,0 +1,292 @@
+
+<!--affiche parent-->
+{% extends './layout/base.html' %}
+ 
+{%block title%}
+{{super() }}|Annonce
+{%endblock%}
+
+
+
+        
+
+
+        {%block content%}
+       
+
+        <br><br>
+<!-- Navbar Start -->
+<div class="row">
+  <div class="col-1"> </div>
+        <div class="col-2">
+           
+         <form method="GET" action="{{ url_for('recherche_annon') }}">
+                <div class="form-group">
+                   
+                  <label for="exampleFormControlInput1" style="font-weight:bold ">Filtrer les résultats</label>
+                  <hr>
+                  <input  name="querygloire" class="form-control filter__text-input" id="exampleFormControlInput1" placeholder="Affinner les résultats des recherches">
+                </div>
+
+                    <hr>
+                <div class="form-group">
+                  <label for="exampleFormControlSelect1" style="font-weight:bold ">Trier par</label>
+                  <hr>
+                  <select class="form-control custom-select" id="exampleFormControlSelect1">
+                    <option>offres speciales</option>
+                    <option>Plus récentes</option>
+                    
+                  </select>
+
+                
+
+                  <hr>
+                  <ul class="list-unstyled">
+                    {% for cat in listcategories %}
+                      <li class="mb-1 colorEldy">
+                        <a href="{{ url_for('articles_par_categorie', categorie=cat.name) }}" class="text-decoration-none 
+                        filter__category-list-item__title
+                        filter__category-list-item__title--level-1
+                    ">
+                          <i class="{{ icons[cat.name] }} colorNano"></i> {{ cat.name }}
+                        </a>
+
+                        {% if cat.name == 'Maison' and request.path == '/Annonce/Maison' %}
+                          <ul class="list-unstyled">
+                            {% for sous_categorie in sous_categories %}
+                              <li class="mb-1 colorEldy">
+                                <a href="{{ url_for('articles_par_sous_categorie', categor=cat.name, souscategor=sous_categorie.value) }}" class="text-decoration-none">{{ sous_categorie.name }}</a>
+                              </li>
+                            {% endfor %}
+                          </ul>
+                        {% endif %}
+
+
+                        {% if cat.name == 'Multimedia' and request.path == '/Annonce/Multimédia' %}
+                          <ul class="list-unstyled">
+                            {% for sous_categorie in sous_categories %}
+                              <li class="mb-1 colorEldy">
+                                <a href="" class="text-decoration-none">{{ sous_categorie.name }}</a>
+                              </li>
+                            {% endfor %}
+                          </ul>
+                        {% endif %}
+
+                        {% if cat.name == 'Immobilier' and request.path == '/Annonce/Immobilier' %}
+                          <ul class="list-unstyled">
+                            {% for sous_categorie in sous_categories %}
+                              <li class="mb-1 colorEldy">
+                                <a href="" class="text-decoration-none">{{ sous_categorie.name }}</a>
+                              </li>
+                            {% endfor %}
+                          </ul>
+                        {% endif %}
+
+                        {% if cat.name == 'Offres_Emploi' and request.path == '/Annonce/OffresEmploi' %}
+                          <ul class="list-unstyled">
+                            {% for sous_categorie in sous_categories %}
+                              <li class="mb-1 colorEldy">
+                                <a href="" class="text-decoration-none">{{ sous_categorie.name }}</a>
+                              </li>
+                            {% endfor %}
+                          </ul>
+                        {% endif %}
+
+
+                      
+                        
+
+                        
+
+                       
+
+                        
+
+
+
+
+
+
+
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+
+                
+                  <p style="font-weight:bold ">Lieux </p>
+                  <hr>
+        
+
+                  <ul class="list-inline">
+                    {% for ann in annonces %}
+
+                    <a href="{{url_for('articles_par_lieu',lieu=ann.lieuPub)}}" class="text-decoration-none colorEldy"><li class="mb-1 colorEldy"> {{ann.lieuPub}}  <span class="badge bg-secondary">{{count_lieu}}</span></li></a>
+
+                    {% endfor %}
+                  
+                  </ul>
+            
+
+
+                <div class="form-group">
+                  <label for="exampleFormControlSelect1" style="font-weight:bold ">Prix</label>
+                  <hr>
+                </div>
+               
+               
+                
+              </form>
+
+        </div>
+
+        <div class="col-9">
+            <nav class="navbar navbar-expand-lg  navbar-light py-3 py-lg-0 px-0">
+                
+               
+                <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                    <div class="navbar-nav mr-auto py-0">
+                        <a href="index.html" class="nav-item nav-link active">Accueil </a>
+                        <a href="shop.html" class="nav-item nav-link">Annonces/{{rEnum}}</a>
+
+
+                     
+
+                    </div>
+
+</div>
+                </nav>
+
+
+                    <div class="d-flex flex-row">
+                        <div class="p-2"><h1 style="color: #616161;
+                            font-size: 18px;
+                            font-weight: 700;
+                            
+                           ">
+
+                            Petites annonces
+                            </h1></div>
+                        <div class="p-2"> <span class="color: #9c9c9c;
+                       
+                            font-size: 14px;
+                            font-size: .875rem;
+                            
+                            ">
+                            {{count}} résultats trouvés
+                            </span></div>
+
+                            <div class="" style="margin-left:223px"> 
+                            <button type="button" class="btn text-white" style="
+                            background-color: #f29541;"><i class="fas fa-solid fa-envelope"></i> Sauvegarder la recherche</button>
+                       </div>
+                      </div>
+
+
+
+                   
+
+                      
+                      {% for annonce in annonces%}
+                      <div class="card flex-row" style="height: 150px; width: 750px;">
+                          <img class="card-img-left" src="{% if not annonce.img_url %}{{ config['NO_PHOTO'] }}{% else %}{{ annonce.img_url }}{% endif %}" alt="{{ annonce.title }}">
+                          <div class="card-body">
+                              <a href="{{ url_for('annonce_Id', id_annonce=annonce.id) }}">
+                                  <h4 class="card-title h5 h4-sm">{{ annonce.title }}</h4>
+                              </a>
+                              <div class="d-flex justify-content-between align-items-center">
+                                  <span>
+                                      <span class="badge badge-success bg-success">{{ annonce.etat }}</span><br>
+                                     
+                                          <i class="fas fa-location-arrow text-secondary"></i>
+                                          {{ annonce.lieuPub }}<br>
+                                  
+                                      
+                                          {{ annonce.datePub | full_date() }} 
+                                      
+
+                                        <h6>  {{ annonce.prix }} FrancsCFA</h6>
+                                     
+                                  </span>
+                                  <div>
+                                      <a class="phone" href="tel:+221{{annonce.users.tel}}">
+                                          <i class="fas fa-phone" style="font-size: 25px;"></i>
+                                      </a>
+                                      <a href="https://api.whatsapp.com/send?phone=+221{{annonce.users.tel}}&text=Bonjour%2C%20je%20suis%20intéressé%20par%20vos%20produits.">
+                                          <i class="fab fa-whatsapp text-success" style="font-size: 27px;"></i>
+                                      </a>
+                                      <a class="" href="{{url_for('chat')}}">
+                                          <i class="fa-brands fa-rocketchat" style="font-size: 25px;"></i>
+                                      </a>
+                  
+                                     
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  
+                      <div class="col-1"></div>
+                  
+                      <br>
+                  
+             {% endfor %}
+                  
+
+                      <!-- Je gère la pagination-->
+                      <nav aria-label="...">
+                        <ul class="pagination pagination">
+
+{% for page in pagination.pages %}
+    {% if page %}
+        {% if page == pagination.page %}
+                          <li class="page-item active " aria-current="page">
+                            <a class="page-link " style="background-color: #f29541;
+                            border-color: #f29541;
+                            color: #fff;
+                            z-index: 3;" href="#">{{ page }}</a>
+                          </li>
+                          {% else %}
+
+                       
+                          <li class="page-item" ><a class="page-link" href="{{ url_for('annonceAll', page=page) }}"style="
+                            color: #f29541;">{{ page }}</a></li>
+                            {% endif %}
+                            {% else %}
+
+                            <span class="ellipsis">&hellip;</span>
+                            {% endif %}
+                        {% endfor %}
+                         
+                          
+                        </ul>
+                      </nav>
+                    
+            </div>
+
+
+            
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        {%endblock%}
+  
+        
+ 
