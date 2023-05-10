@@ -1,0 +1,123 @@
+<!--affiche parent-->
+{% extends './layout/dashBase.html' %}
+ 
+{%block title%}
+{{super() }}|New Restaurant
+{%endblock%}
+
+
+
+{%block content%}
+
+<section class="vh-100" >
+
+    <div class="container">
+
+        
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12">
+         
+
+    <form id="signUpForm" method="POST" action="{{ url_for('saveRestaurant') }}">
+        <!-- start step indicators -->
+        <div class="form-header d-flex mb-4">
+
+            <span class="stepIndicator"><i class="fa-solid fa-pen-to-square fa-2xl" style="color: #ffa033;"></i></span>
+            <span class="stepIndicator "><i class="fa-solid fa-camera-retro fa-2xl" style="color: #ff9500;"></i></span>
+            <span class="stepIndicator "><i class="fa-solid fa-file fa-2xl" style="color: #ff8929;"></i></span>
+            <span class="stepIndicator"><i class="fa-solid fa-cart-shopping fa-2xl" style="color: #ffae00;"></i></i></span>
+        </div>
+        <!-- end step indicators -->
+    
+       
+    <!-- step three -->
+    <div class="step">
+        <p class="text-center mb-4">Détails du restaurant</p>
+        
+        <div class="mb-3">
+          <label for="inputAddress">Categorie du restaurant</label>
+        <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''" name="cat" >
+        </div>
+
+        <div class="mb-3">
+            <label for="inputAddress">Nom du restaurant</label>
+          <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''" name="title" >
+          </div>
+          <div class="mb-3">
+            <label for="inputAddress">Description_restaurant</label>
+          <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''" name="description">
+          </div>
+
+            <div class="mb-3">
+                <label for="inputAddress"> Opening_hours</label>
+            <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''"  step="500" name="ouverture" >ouverture
+            </div>
+
+
+          <div class="mb-3">
+            <label for="inputAddress">Fermeture_hours</label>
+          <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''"  step="500" name="fermeture" >
+          </div>
+
+           
+    </div>
+        <!-- step two -->
+        <div class="step">
+            <p class="text-center mb-4">Télécharger des photos de votre annonce</p>
+            <!--<div class= class="mb-3">
+                <label for="exampleFormControlFile1">img_url</label>
+                <input type="file" class="form-control-file" id="exampleFormControlFile1">
+            </div>-->
+
+
+            <div class="mb-3">
+              <label for="inputAddress">url l'image</label>
+            <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''"  name="img_url" placeholder="titre image" >
+            </div>
+
+            <div class="mb-3">
+              <label for="inputAddress">Titre l'image</label>
+            <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''" name="img_title" placeholder="titre image"  >
+            </div>
+            
+        </div>
+
+        <br>
+    
+        
+        <div class="step">
+
+          <div class="mb-3">
+            <label for="inputAddress">Adresse du resto</label>
+          <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''" name="lieu">
+          </div>
+
+          <div class="form-check mb-4 col-1">
+            <label for="publish">Publier</label>
+            <input type="checkbox" class="form-check-input" name="publish" id="publish ">
+          </div>
+          <br>
+        </div>
+    
+        <!-- start previous / next buttons -->
+        <div class="form-footer d-flex">
+            <button type="button" id="prevBtn" onclick="nextPrev(-1)">Previous</button>
+            <button type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
+        </div>
+        <!-- end previous / next buttons -->
+    </form>
+
+
+
+</div>
+
+                
+                
+</div>
+
+
+</div>
+
+</section>
+
+{%endblock%}

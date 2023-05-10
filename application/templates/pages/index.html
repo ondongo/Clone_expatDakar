@@ -38,8 +38,30 @@
                     
                   </select>
 
-                
+                    
+              </form>
 
+              <form method="GET" action="{{ url_for('filtreMinMax') }}">
+              <div class="form-group">
+                <label for="exampleFormControlSelect1" style="font-weight:bold ">Prix</label>
+               
+                  <div class="row">
+                    <div class="col-4">
+                      <input type="text" class="form-control" placeholder="Min">
+                    </div>
+                    <div class="col-4">
+                      <input type="text" class="form-control" placeholder="Max">
+                    </div>
+                    <div class="col-1 ">
+                    <button type="submit" class="btn btn-primary">Ok</button>
+                    </div>
+                  </div>
+               
+                <hr>
+              </div>
+
+            </form>
+              
                   <hr>
                   <ul class="list-unstyled">
                     {% for cat in listcategories %}
@@ -113,11 +135,9 @@
                   </ul>
                 </div>
 
-                
+               
                   <p style="font-weight:bold ">Lieux </p>
-                  <hr>
         
-
                   <ul class="list-inline">
                     {% for ann in annonces %}
 
@@ -129,14 +149,10 @@
             
 
 
-                <div class="form-group">
-                  <label for="exampleFormControlSelect1" style="font-weight:bold ">Prix</label>
-                  <hr>
-                </div>
                
                
-                
-              </form>
+               
+            
 
         </div>
 
@@ -176,17 +192,20 @@
                             {{count}} résultats trouvés
                             </span></div>
 
+                            
+
                             <div class="" style="margin-left:223px"> 
                             <button type="button" class="btn text-white" style="
                             background-color: #f29541;"><i class="fas fa-solid fa-envelope"></i> Sauvegarder la recherche</button>
                        </div>
+
                       </div>
 
 
 
                    
 
-                      
+                      <br>
                       {% for annonce in annonces%}
                       <div class="card flex-row" style="height: 150px; width: 750px;">
                           <img class="card-img-left" src="{% if not annonce.img_url %}{{ config['NO_PHOTO'] }}{% else %}{{ annonce.img_url }}{% endif %}" alt="{{ annonce.title }}">

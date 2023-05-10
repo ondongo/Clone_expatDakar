@@ -99,12 +99,12 @@
 
             <div class="mb-3">
               <label for="inputAddress">url l'image</label>
-            <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''"  name="img_url" placeholder="titre image" value="{{annonce.img_url}}">
+            <input type="text" class="form-control" id="img" oninput="this.className = ''"  name="img_url" placeholder="titre image" value="{{annonce.img_url}}">
             </div>
 
             <div class="mb-3">
               <label for="inputAddress">Titre l'image</label>
-            <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''" name="img_title" placeholder="titre image" value="{{annonce.img_title}}" >
+            <input type="text" class="form-control" id="img_title" oninput="this.className = ''" name="img_title" placeholder="titre image" value="{{annonce.img_title}}" >
             </div>
             
         </div>
@@ -117,16 +117,16 @@
             
             <div class="mb-3">
                 <label for="inputAddress">Titre</label>
-              <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''" name="title" value="{{annonce.title}}">
+              <input type="text" class="form-control" id="titre" oninput="this.className = ''" name="title" value="{{annonce.title}}">
               </div>
               <div class="mb-3">
                 <label for="inputAddress">Description</label>
-              <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''" name="description" value="{{annonce.description}}">
+              <input type="text" class="form-control" id="description" oninput="this.className = ''" name="description" value="{{annonce.description}}">
               </div>
               
               <div class="mb-3">
                 <label for="inputAddress">Prix</label>
-              <input type="number" class="form-control" id="inputAddress" oninput="this.className = ''"  step="500" name="prix" value="{{annonce.prix}}">
+              <input type="number" class="form-control" id="prix" oninput="this.className = ''"  step="500" name="prix" value="{{annonce.prix}}">
               </div>
 
                
@@ -146,8 +146,8 @@
           </div> 
 
           <div class="mb-3">
-            <label for="inputAddress">lieu</label>
-          <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''" name="lieu" value="{{annonce.lieuPub}}">
+            <label for="inputAddress">lieuPublication</label>
+          <input type="text" class="form-control" id="lieu" oninput="this.className = ''" name="lieu" value="{{annonce.lieuPub}}">
           </div>
 
           <div class="form-check mb-4 col-1">
@@ -178,4 +178,31 @@
 
 </section>
 
+
+
+<script>
+  $(document).ready(function() {
+      // Disable fields on page load
+     // $('#prix').prop('disabled', true);
+    
+      // Watch for changes to the category selection
+      $('#categorie').on('change', function() {
+          var categorie = $(this).val();
+          
+          // Enable/disable fields based on category
+          if (categorie == 'Offres_Emploi') {
+              $('#prix').prop('disabled', true);
+            
+          } 
+          else {
+              $('#prix').prop('disabled', false);
+             
+          }
+      });
+  });
+  </script>
+
+  
+  
+  
 {%endblock%}

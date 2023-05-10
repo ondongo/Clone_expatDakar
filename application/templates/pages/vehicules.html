@@ -17,6 +17,11 @@
         
 
 
+
+
+       <!-- # =====================================================================
+        # =============================Filtre Multiple===========================
+        # =====================================================================  -->     
         <form method="GET" action="{{url_for('vehicules')}}" accept-charset="UTF-8">
             <div class="listings-page-search__filters-tab-content-input" data-search-filter-group data-search-filter-group-count="5" data-search-filter-expand-min-size="4" data-search-filter-group-no-sort>
                 <input name="Categories" type="hidden" value="Vehicules">
@@ -64,6 +69,8 @@
                     <span class="listings-page-search__filters-tab-content-input-field-container" data-search-filter-item data-search-filter-item-count=5 data-search-filter-item-active="0">
                         <input class="form-control listings-page-search__filters-tab-content-input-field" placeholder="Min Prix" min="0" max="999999999999" step="1" name="min-price" type="number"></span><span class="listings-page-search__filters-tab-content-input-field-container" data-search-filter-item data-search-filter-item-count=5 data-search-filter-item-active="0">
                             <input class="form-control listings-page-search__filters-tab-content-input-field" placeholder="Max Prix" min="0" max="999999999999" step="1" name="max-price" type="number"></span>
+
+
                             <span class="listings-page-search__filters-tab-content-input-field-container" data-search-filter-item data-search-filter-item-count=5 data-search-filter-item-active="0">
                                 <select class="form-control listings-page-search__filters-tab-content-input-field" id="condition" name="condition">
                                     <option selected="selected" value="">Etat</option>
@@ -82,6 +89,22 @@
     </button></div></div>
 
 </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </div>
     <div class="tab-pane " id="voitures" role="tabpanel"><h5>Voitures</h5>
         <form method="GET" action="https://www.expat-dakar.com/category-landing-page" accept-charset="UTF-8">

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>{{config['APP_NAME']}}</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="Free HTML Templates" name="keywords">
+        <meta content="Free HTML Templates" name="description">
+    
+        <!-- Favicon -->
+        <link href="img/favicon.ico" rel="icon">
+    
+       
+ 
+  <!-- Fontawesome Icon-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    </head>
+
+
+
+ <!-- Favicon -->
+ <link rel="shortcut icon" href="{{ url_for('static',filename='/images/favicon.ico') }}" />
+      
+ <!-- Library / Plugin Css Build -->
+ <link rel="stylesheet" href="{{ url_for('static',filename='assets/css/core/libs.min.css') }}">
+ 
+ <!-- Custom Css -->
+ <link rel="stylesheet" href="{{ url_for('static',filename='assets/css/aprycot.min.css') }}">  </head>
+<body style="background:f0f0f0;">
+        
+        {% include 'shared/nav_bar.html' %}
+
+
+
+
+       {% block content %}
+    
+       {% endblock  %}
+
+
+
+
+       {% include 'shared/footer.html' %}
+
+        
+        <script src="" async defer></script>
+        <script>
+            $(document).ready(function() {
+              $('.modal').modal();
+            });
+            </script>      
+<!-- Contact Javascript File -->
+<script src="mail/jqBootstrapValidation.min.js"></script>
+
+    <!-- Required Library Bundle Script -->
+    <script src="{{ url_for('static',filename='assets/js/core/libs.min.js') }}"></script>
+    
+    <!-- External Library Bundle Script -->
+    <script src="{{ url_for('static',filename='assets/js/core/external.min.js') }}"></script>
+    
+    <!-- Mapchart JavaScript -->
+    <script src="{{ url_for('static',filename='assets/js/charts/dashboard.js') }}"></script>
+    
+    <!-- fslightbox JavaScript -->
+    <script src="{{ url_for('static',filename='assets/js/fslightbox.js') }}"></script>
+    
+    <!-- app JavaScript -->
+    <script src="{{ url_for('static',filename='assets/js/app.js') }}"></script>
+    
+    <!-- moment JavaScript -->
+    <script src="{{ url_for('static',filename='assets/vendor/moment.min.js') }}"></script>
+
+
+
+
+
+</body>
+
+
+
+
+
+</html>

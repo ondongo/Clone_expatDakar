@@ -28,7 +28,7 @@ class Annonce(db.Model):
     categorie = db.Column(db.String(200))
     sousCategorie = db.Column(db.String(200))
     etat = db.Column(db.String(200),nullable=True)
-    img_url = db.Column(db.String(255))
+    img_url = db.Column(db.String(255),nullable=True)
     img_title = db.Column(db.String(100))
     datePub = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     lieuPub=db.Column(db.String(200))
@@ -38,6 +38,8 @@ class Annonce(db.Model):
     favorites = db.relationship('Favorite', backref='annonces', lazy='dynamic')
     #clé étrangère qui lie l'annonce à l'utilisateur qui l'a publié.
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    #ratings = db.relationship('Ratings', backref='annonces', lazy='dynamic')
+
 
 
     
@@ -58,6 +60,15 @@ class User(db.Model,UserMixin):
     favorites = db.relationship('Favorite', backref='users', lazy='dynamic')
     annonces = db.relationship('Annonce', backref='users', lazy=True)
     boutiques = db.relationship('Boutique', backref='users', lazy=True)
+    restaurant = db.relationship('Restaurant', backref='users', lazy=True)
+    
+    #======= Pour faire le systeme d etoiles
+   # ratings = db.relationship('Ratings', backref='users', lazy='dynamic')
+
+
+
+    
+    
     
     
     def __repr__(self):
@@ -92,11 +103,34 @@ class Boutique(db.Model):
     deleted = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-class Commande(db.Model):
+class Restaurant(db.Model):
+    __tablename__ = "restaurant" 
     id = db.Column(db.Integer, primary_key=True)
+    Categorie_Restaurant = db.Column(db.String(200), nullable=False)
+    Nom_Restaurant = db.Column(db.String(200), nullable=False, unique=True)
+    description_Restaurant = db.Column(db.Text)
+    img_url = db.Column(db.String(255))
+    img_title = db.Column(db.String(100))
+    Opening_hours=db.Column(db.String(200))
+    Fermeture_hours=db.Column(db.String(200))
+    
+    adresse=db.Column(db.String(200))
+    published = db.Column(db.Boolean, default=True)
+    deleted = db.Column(db.Boolean, default=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+# class Ratings(db.Model):
+#     __tablename__ = "ratings" 
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+#     annonce_id = db.Column(db.Integer, db.ForeignKey('annonces.id'))
+  
+# ----------Pas besoin
+# class Commande(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
    
-class Payement(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+# class Payement(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
   
 
 
@@ -107,10 +141,18 @@ class Payement(db.Model):
 
 
 
+# =====================================================================
+# =============================Requetes complexes dans back.py et front.py ==============
+# =====================================================================
+
+
+
+
+
 
 
 # ****************************************************************************
-# =*****************************Debut Requetes Query***********************************
+# =*****************************Debut Requetes Query Simples***********************************
 # **********************************************************************
 
 
@@ -185,6 +227,13 @@ def getAllAnnonceA_La_Une():
 def saveAnnonce(annonce: Annonce):
     db.session.add(annonce)
     db.session.commit()
+    
+    
+#============Save objet de type article====================
+def addResto(resto: Restaurant):
+    db.session.add(resto)
+    db.session.commit()
+
 
 #==============================---------Modifier Annonce
 
@@ -243,7 +292,6 @@ def saveUser(user: User):
 def ajouter_favori(favorite: Favorite):
     db.session.add(favorite)
     db.session.commit()
-
 
 
 # =====================================================================

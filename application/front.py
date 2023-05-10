@@ -4,6 +4,7 @@ from sqlalchemy import desc
 from application.models.EnumEtatArticle import *
 from application.models.EnumCategorie import *
 from application.models.SousCategorie import *
+from sqlalchemy import func
 
 # from . import fakes_data
 # from .fakes_data import getAllArticles, findArticleById
@@ -31,13 +32,15 @@ app.config.from_object("config")
 
 
 from application.models.model import (
-    findAnnonceById,Annonce,getAllAnnoncePublier,getAllAnnonceA_La_Une,User)
+     findAnnonceById,Annonce,getAllAnnoncePublier,getAllAnnonceA_La_Une,User,
+    Restaurant)
 
 listcategories=list(EnumCategorie)
 listEtats=list(EnumEtatArticle)
 sous_categories=[]
 listesVehicules =list(SousCategorieVehicule)
 icons = {
+        'restauration': 'fas fa-utensils',
         'Vehicules': 'fas fa-car',
         'Multimedia': 'fas fa-computer',
         'Immobilier': 'fas fa-house-chimney-window',
@@ -91,11 +94,12 @@ def annonceAll():
     pagination = Pagination(page=page, per_page=NbreElementParPage, total=count)
     annonces = annonces[offset: offset + NbreElementParPage]
     
-    # Créer une liste pour stocker les numéros de téléphone
-    # Créer un dictionnaire pour stocker les numéros de téléphone par utilisateur
+    # liste pour stocker les numéros de téléphone
+    # stocker les numéros de téléphone par utilisateur
     
 
-    # Boucler sur chaque annonce pour récupérer le numéro de téléphone de son auteur       
+    # Boucle sur chaque annonce pour récupérer le numéro de téléphone de son auteur    
+    #Bof Mon many to one m a gere ca   
             
     return render_template("/pages/index.html",
                            annonces=annonces,
@@ -192,7 +196,6 @@ def Multimédia_articles():
     
     return render_template("/pages/index.html",annonces=annonces,listcategories=listcategories,icons=icons,count=count,rEnum=rEnum.Multimedia.name,pagination=pagination,sous_categories=sous_categories)
 
-
 #==============06
 @app.route('/Annonce/OffresEmploi')
 def Demande_Emploi_articles():
@@ -253,11 +256,11 @@ def articles_par_sous_categorie():
     souscategor = request.args.get('souscategor')
     
     if categor is None:
-        # Si la catégorie n'est pas spécifiée, afficher toutes les annonces
+        # =====================Si la catégorie n'est pas spécifiée, afficher toutes les annonces
         annonces = Annonce.query.all()
         count =len(annonces)
     else:
-        # Si la catégorie est spécifiée, filtrer par catégorie
+        # =================Si la catégorie est spécifiée, filtrer par catégorie
         annonces = Annonce.query.filter_by(categorie=categor,sousCategorie=souscategor).all()
         # count =Annonce.query.filter_by(categorie=categorie).count()
         count=len(annonces) 
@@ -321,6 +324,10 @@ def recherche_annon():
 @app.route("/Annonce/<int:id_annonce>")
 def annonce_Id(id_annonce):
     annonce = findAnnonceById(id_annonce)
+    
+    
+    # nbreEtoiles = Annonce.query(func.avg(Ratings.rating)).filter_by(annonce_id=id_annonce).scalar()
+
    
     if not annonce:
         return redirect(url_for("/"))
@@ -405,6 +412,8 @@ def vehicules():
     sousCategorieRecup=request.args.get('sousCategorie')
     if prixmaxRecup is not None and prixminRecup is not None and sousCategorieRecup is None :
         annonces=Annonce.query.filter(Annonce.prix.between(prixminRecup,prixmaxRecup)).all()
+        
+        
     if sousCategorieRecup is not None and prixmaxRecup is None and prixminRecup is None:
         annonces=Annonce.query.filter(Annonce.sousCategorie==sousCategorieRecup).all()
     annonces=Annonce.query.filter(Annonce.prix.between(prixminRecup,prixmaxRecup),Annonce.categorie==CategoryRecup).all()
@@ -416,8 +425,15 @@ def vehicules():
     offset = (page - 1) * NbreElementParPage
     pagination = Pagination(page=page, per_page=NbreElementParPage, total=len(annonces))
     annonces = annonces[offset: offset + NbreElementParPage]
+    
     return render_template("/pages/index.html",annonces=annonces,listcategories=listcategories,icons=icons,count=count,pagination=pagination)
 
+
+
+#====================je vais dans mon fichier special.py
+@app.route('/chat')
+def chat():
+    return render_template("/pages/chat.html")
 
 
 
@@ -471,8 +487,41 @@ def vehicules():
 
 
 
-    
-@app.route('/chat')
-def chat():
-    return render_template("/pages/chat.html")
+@app.route('/Restauration')
+def Restauration_Categorie():  
+    restos = Restaurant.query.all()
+    count = len(restos)
+    restoCat = Restaurant.query.all()
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    NbreElementParPage = 2
+    offset = (page - 1) * NbreElementParPage
+    pagination = Pagination(page=page, per_page=NbreElementParPage, total=count)
+    restos = restos[offset: offset + NbreElementParPage]
+    return render_template("/pages/restauration.html",restos=restos,pagination=pagination,restoCat=restoCat)
 
+
+# =====================Search-----RestaurantParCategorie
+@app.route('/CatResto')
+def restaurant_par_categorie():
+    categorieResto = request.args.get('categorieResto')
+    
+    if categorieResto is None:
+        # Si la catégorie n'est pas spécifiée, afficher toutes les annonces
+        restos = Restaurant.query.all()
+        restoCat = Restaurant.query.all()
+        count =len(restos)
+    else:
+        # Si la catégorie est spécifiée, filtrer par catégorie
+        restos = Restaurant.query.filter_by(Categorie_Restaurant=categorieResto).all()
+        restoCat = Restaurant.query.all()
+        # count =Annonce.query.filter_by(categorie=categorie).count()
+        count=len(restos) 
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    NbreElementParPage = 2
+    offset = (page - 1) * NbreElementParPage
+    pagination = Pagination(page=page, per_page=NbreElementParPage, total=count)
+    restos = restos[offset: offset + NbreElementParPage]
+        
+    
+  
+    return render_template("/pages/restauration.html",restos=restos,pagination=pagination,restoCat=restoCat)

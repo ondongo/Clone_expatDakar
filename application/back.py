@@ -19,6 +19,7 @@ login_manager.login_message_category = 'info'
 from application.models.model import(
     Annonce,
     Favorite,
+    Restaurant,
     ajouter_favori,
     findAnnonceById,
     saveAnnonce,
@@ -30,7 +31,8 @@ from application.models.model import(
     editAnnonceModel,
     
     User,
-    saveUser
+    saveUser,
+    addResto
     
 )
 
@@ -173,7 +175,8 @@ def save():
 
 
 # =====================================================================
-# =============================Gerer Annonce===========================
+# =============================Gerer Annonce Admin
+# -===========================
 # =====================================================================   
 @app.route('/admin/listings')
 @login_required
@@ -348,4 +351,74 @@ def ajouter_favoriBack(id_annonce):
         return redirect(url_for('articles_favoris'))
     else:
         flash('Impossible Deja en favori')
+
+
+@app.route('/retirer_favoriBack/<int:id_annonce>', methods=['GET','POST'])
+@login_required
+def retirer_favoriBack(id_annonce):
+    return redirect(url_for('articles_favoris'))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#************************************SaveRestaurant ***********************************
+
+@app.route('/admin/addResto', methods=['GET', 'POST'])
+@login_required
+def publierResto():
+    return render_template("back/CreerRestaurant.html")
+    
+    
+@app.route("/saveRestaurant", methods=["POST"])
+def saveRestaurant():
    
+    #id_annonce = request.form.get("id_annonce")
+    nom_form = request.form.get("title")
+    cat_form = request.form.get("cat")
+   
+    description_form = request.form.get("description")
+    lieu_form = request.form.get("lieu")
+    img_url_form = request.form.get("img_url")
+    img_title_form = request.form.get("img_title")
+    ouverture_form= request.form.get("ouverture")
+    fermeture_form=request.form.get("fermeture")
+    publish_form=request.form.get("publish")
+
+    # if not publish_form:
+    #     publish_form = False
+    # else:
+    #     publish_form = True
+
+    publish_form = False if not publish_form else True
+
+    # Creer un objet de type Annonce
+    
+    new_restaurant = Restaurant(
+        Categorie_Restaurant=cat_form,
+        Nom_Restaurant=nom_form,
+        description_Restaurant=description_form ,
+       
+        published=publish_form,
+        img_url=img_url_form,
+        img_title=img_title_form,
+       Opening_hours=ouverture_form,
+       Fermeture_hours=fermeture_form,
+        adresse= lieu_form ,
+        user_id=current_user.id,
+     
+        # datePub=datetim
+    )
+    
+    addResto(new_restaurant)
+    return redirect(url_for("publierResto"))
+    
