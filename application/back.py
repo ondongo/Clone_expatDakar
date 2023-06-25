@@ -1,5 +1,5 @@
 import dbm
-from .front import app
+from .front import app,socketio
 
 from flask import render_template, request, redirect, url_for, flash,session
 from application.models.EnumEtatArticle import *
@@ -16,9 +16,17 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
 
+
+
+# =====================================================================
+# =============================Import Model===========================
+# =====================================================================
+
 from application.models.model import(
     Annonce,
     Favorite,
+    saveMessage,
+    Message,
     Restaurant,
     ajouter_favori,
     findAnnonceById,
@@ -27,6 +35,7 @@ from application.models.model import(
     getAllAnnonceBrouillon,
     getAllAnnonceDel,
     un_delete,
+    un_deleteFavorite,
     un_published,
     editAnnonceModel,
     
@@ -39,14 +48,13 @@ from application.models.model import(
 
 
 listcategories=list(EnumCategorie)
-
 listEtats=list(EnumEtatArticle)
-# =====================================================================
-# =============================Publier Annonce===========================
-# =====================================================================
 
-  
- 
+
+
+# =====================================================================
+# =============================Publier Annonce Flask + JS===========================
+# =====================================================================
 
 @app.route('/admin/add/<categorie>', methods=['GET', 'POST'],defaults={"id_annonce":0,"categorie":None})
 @app.route('/admin/add/<categorie>', methods=['GET', 'POST'],defaults={"id_annonce":0})
@@ -102,6 +110,9 @@ def publierAnnonce(id_annonce, categorie):
 
 
 
+# =====================================================================
+# =============================Edit Annonce===========================
+# =====================================================================
 
 
 @app.route('/admin/edit/<int:id_annonce>', methods=['GET', 'POST'])
@@ -132,8 +143,6 @@ def edit():
 #************************************Save ***********************************
 @app.route("/save", methods=["POST"])
 def save():
-  
-   
     id_annonce = request.form.get("id_annonce")
     title_form = request.form.get("title")
     categorie_form = request.form.get("categorie")
@@ -177,7 +186,9 @@ def save():
 # =====================================================================
 # =============================Gerer Annonce Admin
 # -===========================
-# =====================================================================   
+# =====================================================================  
+
+
 @app.route('/admin/listings')
 @login_required
 def gestionAnnonce():
@@ -223,6 +234,16 @@ def un_publishAnnonce(id_annonce):
     un_published(id_annonce)
     return redirect(url_for("gestionAnnonce"))
 
+#**********************Recherche Avancee *********************************** 
+@app.route('/recherche-annonceAvancee')
+def recherche_annonAvancee():
+    query = request.args.get('searchAvance')
+    annonces=(Annonce.query.filter( Annonce.user_id==current_user.id,
+                                   Annonce.title.ilike(f"%{query}%"))
+        .order_by(desc(Annonce.datePub))
+        .all())
+    count =len(annonces)
+    return render_template("/back/gestionAnnonce.html",annonces=annonces,count=count)
 
 
 
@@ -230,6 +251,8 @@ def un_publishAnnonce(id_annonce):
 # =============================Gestion de la connexion===========================
 # =====================================================================
 
+
+#*****************************Creer Compte*********************************** 
 @app.route("/compte/creation", methods=["POST","GET"])
 def creation_compte():
     if request.method == "POST":
@@ -265,11 +288,10 @@ def creation_compte():
 
 
 
-
+#*****************************Connexion *********************************** 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-
 
 @app.route("/login", methods = ["GET","POST"])
 def login():
@@ -289,7 +311,7 @@ def login():
     else:
         return render_template("/back/login.html")
 
-# Deconnexion
+#*****************************Deconnexion *********************************** 
 @app.route('/logout')
 @login_required
 def logout():
@@ -305,23 +327,17 @@ def logout():
 # =============================404 Error=========================================
 # =====================================================================
 
-
 @app.errorhandler(404)
 def page404(error):
     return render_template("errors/404.html")
 
 
-@app.route('/recherche-annonceAvancee')
-def recherche_annonAvancee():
-    query = request.args.get('searchAvance')
-    annonces=(Annonce.query.filter( Annonce.user_id==current_user.id,
-                                   Annonce.title.ilike(f"%{query}%"))
-        .order_by(desc(Annonce.datePub))
-        .all())
-    count =len(annonces)
-    return render_template("/back/gestionAnnonce.html",annonces=annonces,count=count)
 
 
+
+# ===================================================================
+# =============================Gestion des favoris  =========================================
+# =====================================================================
 
 @app.route('/favoris')
 @login_required
@@ -338,7 +354,7 @@ def articles_favoris():
     return render_template('/back/favori.html', annonces_favoris=annonce_favoris_info,count_fav=count_fav)
 
 
-
+#******************Ajouter Favori*********************************** 
 @app.route('/ajouter_favoriBack/<int:id_annonce>', methods=['GET','POST'])
 @login_required
 def ajouter_favoriBack(id_annonce):
@@ -360,6 +376,16 @@ def retirer_favoriBack(id_annonce):
 
 
 
+#====>Favori G
+@app.route('/favorites/delete/<int:favorite_id>', methods=['POST','GET'])
+def delete_favorite(favorite_id):
+    # Récupérer le favori à supprimer de la base de données
+    favorite = Favorite.query.get(favorite_id)
+    # Vérifier si le favori existe
+    if favorite:
+        un_deleteFavorite(favorite)
+    # Rediriger vers la page des favoris après la suppression
+    return redirect(url_for('articles_favoris'))
 
 
 
@@ -370,6 +396,10 @@ def retirer_favoriBack(id_annonce):
 
 
 
+
+# ===================================================================
+# =============================Restaurant  =========================================
+# =====================================================================
 
 #************************************SaveRestaurant ***********************************
 
@@ -421,4 +451,64 @@ def saveRestaurant():
     
     addResto(new_restaurant)
     return redirect(url_for("publierResto"))
-    
+
+
+# ===================================================================
+# =============================Chat Envoye Recevoir  =========================================
+# =====================================================================
+
+@app.route('/messages/<recipient_id>', methods=['GET', 'POST'])
+@login_required
+def messages(recipient_id):
+    recipient = User.query.get(recipient_id)
+    if request.method == 'POST':
+        sender_id = request.form['sender_id']
+        content = request.form['content']
+        message = Message(sender_id=sender_id, recipient_id=recipient_id, content=content)
+        saveMessage(message)
+    messages = Message.query.filter(
+        (Message.sender_id == recipient_id and Message.recipient_id == current_user.id) or
+        (Message.sender_id == current_user.id and Message.recipient_id == recipient_id)
+    ).order_by(Message.timestamp.asc()).all()
+    return render_template('pages/chat.html', recipient=recipient, messages=messages)
+
+        
+@app.route('/chat/<recipient_id>')
+def chatAdmin(recipient_id):
+    # Récupérer le destinataire (utilisateur avec l'identifiant recipient_id)
+    recipient = User.query.get(recipient_id)
+
+    # Récupérer les messages échangés entre l'utilisateur courant et le destinataire
+    messages = Message.query.filter(
+        (Message.sender == current_user and Message.recipient == recipient) |
+        (Message.sender == recipient and Message.recipient == current_user)
+    ).all()
+
+    return render_template('back/chat.html', recipient=recipient, messages=messages)
+
+
+
+
+@app.route('/chat/send', methods=['POST'])
+def send_messageBack():
+    # Récupérer l'identifiant du destinataire à partir du formulaire
+    recipient_id = request.form.get('recipient_id')
+
+    # Récupérer le contenu du message à partir du formulaire
+    content = request.form.get('content')
+
+    # Récupérer l'utilisateur courant (expéditeur)
+    sender = current_user
+
+    # Récupérer le destinataire
+    recipient = User.query.get(recipient_id)
+
+    # Créer un nouveau message
+    message = Message(sender=sender, recipient=recipient, content=content)
+    saveMessage(message)
+
+    # Rediriger vers la page de chat avec le destinataire
+    return redirect(url_for('chatAdmin', recipient_id=recipient_id))
+        
+        
+        

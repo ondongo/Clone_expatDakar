@@ -22,14 +22,14 @@ class Annonce(db.Model):
     __tablename__ = "annonces" 
     # Au cas ou on change le nom de la table
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(200), nullable=False, unique=True)
+    title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text)
     prix=db.Column(db.Float(1000),nullable=True)
     categorie = db.Column(db.String(200))
     sousCategorie = db.Column(db.String(200))
     etat = db.Column(db.String(200),nullable=True)
     img_url = db.Column(db.String(255),nullable=True)
-    img_title = db.Column(db.String(100))
+    img_title = db.Column(db.String(100),nullable=True)
     datePub = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     lieuPub=db.Column(db.String(200))
     published = db.Column(db.Boolean, default=True)
@@ -51,8 +51,8 @@ class User(db.Model,UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(200), nullable=False)
     prenom  = db.Column(db.String(200), nullable=False)
-    tel  = db.Column(db.String(200), nullable=False,unique=True)
-    login = db.Column(db.String(200), nullable=False, unique=True)
+    tel  = db.Column(db.String(200), nullable=False)
+    login = db.Column(db.String(200), nullable=False)
     password = db.Column(db.String(5000), nullable=False)
     active = db.Column(db.Boolean, default=True)
     #==============-------Chaque fois que l'utilisateur publie ça compte si ça arrive à 100 passe le Vip
@@ -61,7 +61,10 @@ class User(db.Model,UserMixin):
     annonces = db.relationship('Annonce', backref='users', lazy=True)
     boutiques = db.relationship('Boutique', backref='users', lazy=True)
     restaurant = db.relationship('Restaurant', backref='users', lazy=True)
-    
+    messages_sent = db.relationship('Message', backref='sender', foreign_keys='Message.sender_id', lazy=True)
+    messages_received = db.relationship('Message', backref='recipient', foreign_keys='Message.recipient_id', lazy=True)
+
+   
     #======= Pour faire le systeme d etoiles
    # ratings = db.relationship('Ratings', backref='users', lazy='dynamic')
 
@@ -77,7 +80,26 @@ class User(db.Model,UserMixin):
     def check_password(self, password):
         return hashlib.md5(password.encode('utf-8')).hexdigest() == self.password
     
+    def send_message(self, recipient, content):
+        message = Message(sender=self, recipient=recipient, content=content)
+        db.session.add(message)
+        db.session.commit()
 
+
+
+
+
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
+    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    def __repr__(self):
+        return f"Message('{self.content}', '{self.timestamp}')"
+    
  #constructeur
     # def __init__(self, nom, prenom, tel, email, password) :
     #     self.nom = nom
@@ -85,7 +107,14 @@ class User(db.Model,UserMixin):
     #     self.tel = tel
     #     self.email = email
     #     self.password = password
-
+    
+    
+#============Save objet de type article====================
+def saveMessage(message: Message):
+    db.session.add(message)
+    db.session.commit()
+    
+    
 class Boutique(db.Model):
     __tablename__ = "boutique" 
     id = db.Column(db.Integer, primary_key=True)
@@ -271,6 +300,12 @@ def un_delete(id_annonce):
 
     annonce.deleted = not annonce.deleted
     db.session.commit()
+    
+    
+def un_deleteFavorite(favorite:Favorite):
+    db.session.delete(favorite)
+    db.session.commit()
+
 
 #========---------Mettre Favori
 # def ajouter_favori(user_id, annonce_id):
@@ -300,7 +335,7 @@ def ajouter_favori(favorite: Favorite):
 @app.cli.command('EldyDb')
 def init_db():
     with app.app_context():
-        db.drop_all()
+        # db.drop_all()
         db.create_all()
         
         log.warning("Base de donnees actualisee")

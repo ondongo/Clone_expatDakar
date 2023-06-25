@@ -1,17 +1,18 @@
 
-from flask import Flask, render_template,redirect,url_for,request,session
+from flask import Flask, render_template,redirect,url_for,request
 from sqlalchemy import desc
 from application.models.EnumEtatArticle import *
 from application.models.EnumCategorie import *
 from application.models.SousCategorie import *
-from sqlalchemy import func
 
+
+
+#from .routes import main 
 # from . import fakes_data
 # from .fakes_data import getAllArticles, findArticleById
 
 
 from flask_paginate import Pagination, get_page_parameter
-
 
 #----------Fichier Principal-------------
 app =Flask(__name__)
@@ -28,12 +29,16 @@ app =Flask(__name__)
 # Une fonction et Route en meme temps
 
 app.config.from_object("config")
-
+socketio = SocketIO(
+    app,
+   
+    mode='r',
+   
+)
 
 
 from application.models.model import (
-     findAnnonceById,Annonce,getAllAnnoncePublier,getAllAnnonceA_La_Une,User,
-    Restaurant)
+     Message, User, findAnnonceById,Annonce,getAllAnnoncePublier,getAllAnnonceA_La_Une,Restaurant)
 
 listcategories=list(EnumCategorie)
 listEtats=list(EnumEtatArticle)
@@ -64,12 +69,38 @@ def dslfsdlfjlsd(date):
 
 
 
+# ===================================================================
+# =============================Test Api de Google Pour la gestion des lieux  =========================================
+# =====================================================================
+
+# remplacer 'API_KEY' par votre clé API Google Maps
+# api_key = 'API_KEY'
+
+# # remplacer les coordonnées ci-dessous par celles de votre lieu de publication
+# lat = 48.8534
+# lng = 2.3488
+
+# url = f'https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lng}&key={api_key}'
+# response = requests.get(url)
+
+# if response.status_code == 200:
+#     result = response.json()
+#     if result['status'] == 'OK':
+#         place_name = result['results'][0]['formatted_address']
+#         print(place_name)
+#     else:
+#         print(result['status'])
+# else:
+#     print('Error:', response.status_code)
+
+
+
 
 @app.route("/")
 def index():
     # app.config['APP_NAME']="gloire"
     # print(app.config)
-    return redirect(url_for("annonceAll"))
+    return redirect(url_for(" test15"))
 
 # def recuperationTel(id_annonce):
 #      # Récupérer l'annonce correspondante à l'id_annonce fourni
@@ -81,7 +112,10 @@ def index():
 #     return user.tel
 
     
-   
+@app.route("/Annonce50")
+def test15():
+     return render_template("/pages/indexEldy.html"),
+     
 
 
 @app.route("/Annonce")
@@ -298,10 +332,29 @@ def articles_par_lieu():
     return render_template("/pages/index.html",annonces=annonces,listcategories=listcategories,icons=icons,count_lieu=count_lieu,pagination=pagination)
 
 
+# =====================Search-----Lieu
+@app.route('/Ann_Prix')
+def annonces_par_Prix():
+    prixmaxRecup=request.args.get('max-priceIndex')
+    prixminRecup=request.args.get('min-priceIndex')
+
+    if prixmaxRecup is not None and prixminRecup is not None:
+        annonces=Annonce.query.filter(Annonce.prix.between(prixminRecup,prixmaxRecup)).all()
+
+    else:
+        # Si la catégorie est spécifiée, filtrer par catégorie
+        annonces = Annonce.query.all()
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    NbreElementParPage = 2
+    offset = (page - 1) * NbreElementParPage
+    pagination = Pagination(page=page, per_page=NbreElementParPage, total=len(annonces))
+    annonces = annonces[offset: offset + NbreElementParPage]
+        
+    
+    return render_template("/pages/index.html",annonces=annonces,listcategories=listcategories,icons=icons,pagination=pagination)
+
 
 # ==================================Search-----Input
-
-
 
 @app.route('/recherche-annonce')
 def recherche_annon():
@@ -316,6 +369,29 @@ def recherche_annon():
     annonces = annonces[offset: offset + NbreElementParPage]
     return render_template("/pages/index.html",annonces=annonces,listcategories=listcategories,icons=icons,count=count,pagination=pagination)
 
+# afficher les annonces filtrées
+@app.route('/annoncesTri', methods=['GET', 'POST'])
+def afficher_annoncesTri():
+    if request.method == 'POST':
+        tri = request.form['tri']
+        if tri == 'croissant':
+            annonces = Annonce.query.order_by(Annonce.prix.asc()).all()
+        elif tri == 'decroissant':
+            annonces = Annonce.query.order_by(Annonce.prix.desc()).all()
+        elif tri == 'recents':
+            annonces = Annonce.query.order_by(Annonce.datePub.desc()).all()
+        else:
+            return 'Tri invalide'
+    else:
+        annonces = Annonce.query.all()
+
+    count =len(annonces)
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    NbreElementParPage = 2
+    offset = (page - 1) * NbreElementParPage
+    pagination = Pagination(page=page, per_page=NbreElementParPage, total=len(annonces))
+    annonces = annonces[offset: offset + NbreElementParPage]
+    return render_template("/pages/index.html",annonces=annonces,listcategories=listcategories,icons=icons,count=count,pagination=pagination)
 
 # =====================================================================
 # =============================Details Annonces===========================
@@ -430,17 +506,53 @@ def vehicules():
 
 
 
+
+# ===================================================================
+# =============================Chat Envoye Recevoir Avec Socketio  =========================================
+# =====================================================================
+
 #====================je vais dans mon fichier special.py
-@app.route('/chat')
-def chat():
-    return render_template("/pages/chat.html")
+
+# messages = []  # Liste pour stocker les messages
+
+# @app.route('/chat/<int:article_id>')
+# def chat(article_id):
+#     annonce = Annonce.query.get(article_id)
+#     if annonce:
+#         article_author = annonce.users.nom
+#         return render_template("/pages/chat.html", article_author=article_author)
+#     else:
+#         return "Article not found"
+
+# @socketio.on('connect')
+# def handle_connect():
+#     print('Client connected!')
+
+# @socketio.on('user_join')
+# def handle_user_join(username):
+#     print(f'User {username} joined!')
+
+# @socketio.on('new_message')
+# def handle_new_message(data):
+#     message = data['message']
+#     recipient = data['recipient']
+#     sender = None
+
+#     for sid, user in socketio.server.manager.rooms[''].items():
+#         if user == request.sid:
+#             sender = sid
+#             break
+
+#     if recipient == article_author:
+#         emit('chat', {'message': message, 'sender': sender, 'recipient': recipient}, room=recipient)
+#     else:
+#         emit('chat', {'message': message, 'sender': sender}, broadcast=True)
+
+#         # Ajouter le message à la liste
+#         messages.append({'sender': sender, 'message': message})
 
 
 
-
-
-#comment activer mon environement
-#comment utiliser le module python chatgpt
 # @app.route('/Annonce/Recent', methods=['POST'])
 # def process_form():
 #     selected_value = request.form['select_field']
@@ -448,27 +560,6 @@ def chat():
 #     # Do something with the selected value
 #     return render_template("/pages/index.html",annonces=annonces,listcategories=listcategories,icons=icons)
     
-
-
-# remplacer 'API_KEY' par votre clé API Google Maps
-# api_key = 'API_KEY'
-
-# # remplacer les coordonnées ci-dessous par celles de votre lieu de publication
-# lat = 48.8534
-# lng = 2.3488
-
-# url = f'https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lng}&key={api_key}'
-# response = requests.get(url)
-
-# if response.status_code == 200:
-#     result = response.json()
-#     if result['status'] == 'OK':
-#         place_name = result['results'][0]['formatted_address']
-#         print(place_name)
-#     else:
-#         print(result['status'])
-# else:
-#     print('Error:', response.status_code)
 
 
 
@@ -525,3 +616,11 @@ def restaurant_par_categorie():
     
   
     return render_template("/pages/restauration.html",restos=restos,pagination=pagination,restoCat=restoCat)
+
+
+# articles = Article.query.order_by(Article.prix.asc()).all()
+# articles = Article.query.order_by(Article.prix.desc()).all()
+# # récupère les 10 articles les plus récents
+# articles = Article.query.order_by(Article.date.desc()).limit(10).all()
+
+

@@ -100,7 +100,7 @@
                                 <div class="row pb-3 shadow mb-5 p-3 bg-secondary">
                                         <div class="col-4">
                                         <div class="btn-group dropup">
-                                          <a href="" class="btn btn-{{ btn_class_del }} btn-sm {{tap_del}}">Supprimer Favori</a>
+                                          <a href="{{url_for('delete_favorite',favorite_id=annonce.id)}}" class="btn btn-{{ btn_class_del }} btn-sm {{tap_del}}">Supprimer Favori</a>
                                                 
                                         </div>
         

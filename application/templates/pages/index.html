@@ -27,30 +27,42 @@
                   <hr>
                   <input  name="querygloire" class="form-control filter__text-input" id="exampleFormControlInput1" placeholder="Affinner les résultats des recherches">
                 </div>
+          </form>
 
                     <hr>
+
+          <form method="GET" action="{{ url_for('afficher_annoncesTri') }}">
                 <div class="form-group">
                   <label for="exampleFormControlSelect1" style="font-weight:bold ">Trier par</label>
                   <hr>
-                  <select class="form-control custom-select" id="exampleFormControlSelect1">
-                    <option>offres speciales</option>
-                    <option>Plus récentes</option>
+                  <div class="row">
+                    <div class="col-8">
+                  <select class="form-control custom-select" id="exampleFormControlSelect1" name="tri">
+                    <option value="croissant">Croissant</option>
+                    <option value="decroissant">Decroissant</option>
+                    <option value="recents">Plus récentes</option>
                     
                   </select>
+                </div>
+                  <div class="col-2">
+                    <button type="submit" class="btn btn-primary">Ok</button>
+                    </div>
 
+                  </div>
                     
               </form>
 
-              <form method="GET" action="{{ url_for('filtreMinMax') }}">
+            </br>
+              <form method="GET" action="{{ url_for('annonces_par_Prix') }}">
               <div class="form-group">
                 <label for="exampleFormControlSelect1" style="font-weight:bold ">Prix</label>
                
                   <div class="row">
                     <div class="col-4">
-                      <input type="text" class="form-control" placeholder="Min">
+                      <input type="number" class="form-control" placeholder="Min" name="min-priceIndex">
                     </div>
-                    <div class="col-4">
-                      <input type="text" class="form-control" placeholder="Max">
+                    <div class="col-5">
+                      <input type="number" class="form-control" placeholder="Max"  name="max-priceIndex">
                     </div>
                     <div class="col-1 ">
                     <button type="submit" class="btn btn-primary">Ok</button>
@@ -234,7 +246,7 @@
                                       <a href="https://api.whatsapp.com/send?phone=+221{{annonce.users.tel}}&text=Bonjour%2C%20je%20suis%20intéressé%20par%20vos%20produits.">
                                           <i class="fab fa-whatsapp text-success" style="font-size: 27px;"></i>
                                       </a>
-                                      <a class="" href="{{url_for('chat')}}">
+                                      <a class="" href="{{url_for('messages',recipient_id=annonce.users.id)}}">
                                           <i class="fa-brands fa-rocketchat" style="font-size: 25px;"></i>
                                       </a>
                   

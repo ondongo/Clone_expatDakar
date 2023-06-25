@@ -29,11 +29,13 @@
                         <li class="menu-nav__list-item menu-nav__list-item__user-navigation "><a href="{{url_for('gestionAnnonce')}}" class="text-black">Accueil</a> </li>
                         <li class="menu-nav__list-item menu-nav__list-item__user-navigation menu-nav__list-item__active "><a href="{{url_for('publierAnnonce')}}" class="text-blue">Gerer Annonces</a> </li>
                         <li class="menu-nav__list-item menu-nav__list-item__user-navigation "><a href="{{url_for('publierAnnonce')}}"class="text-black">publier Annonce</a> </li>
-                        <li class="menu-nav__list-item menu-nav__list-item__user-navigation "><a href="" class="text-black">Mes Favoris</a> </li>
+                        <li class="menu-nav__list-item menu-nav__list-item__user-navigation "><a href="{{url_for('articles_favoris')}}" class="text-black">Mes Favoris</a> </li>
                         <li class="menu-nav__list-item menu-nav__list-item__user-navigation "><a href="#" class="text-black">Mon Showroom</a> </li>
                         <li class="menu-nav__list-item menu-nav__list-item__user-navigation "><a href="#" class="text-black">Mon Profil</a> </li>
                         <li class="menu-nav__list-item menu-nav__list-item__user-navigation "><a href="#" class="text-black">Mes Messages</a> </li>
                         <li class="menu-nav__list-item menu-nav__list-item__user-navigation "><a href="#" class="text-black">Mon Profil Cv</a> </li>
+
+                        <li class="menu-nav__list-item menu-nav__list-item__user-navigation ">  <a class="text-black" href="{{url_for('chatAdmin',recipient_id=current_user.id)}}">chat</a></li>
                        
                 </div>
 
