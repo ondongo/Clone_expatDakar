@@ -31,6 +31,15 @@ class Color(db.Model):
     name = db.Column(db.Enum(EnumColor), nullable=False)
     item_id = db.Column(db.Integer, db.ForeignKey('items.id'))
 
+
+class Category(db.Model):
+    __tablename__ = "categories"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    #item_id = db.Column(db.Integer, db.ForeignKey('items.id'))
+    
+    
+    
 class Item(db.Model):
     __tablename__ = "items"
     id = db.Column(db.Integer, primary_key=True)
@@ -244,7 +253,7 @@ def transfer_session_cart_to_db_cart(user_id, session_cart):
         if cart_item:
             cart_item.quantity += 1
         else:
-            cart_item = CartItem(cart=user_cart, annonce_id=product_id, quantity=1)
+            cart_item = CartItem(cart=user_cart, annonce_id=product_id, quantity=1 )
             db.session.add(cart_item)
 
     db.session.commit()
