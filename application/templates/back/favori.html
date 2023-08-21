@@ -28,7 +28,7 @@
                         <hr class="menu-nav__list-item__divider">
                         <li class="menu-nav__list-item menu-nav__list-item__user-navigation "><a href="{{url_for('gestionAnnonce')}}" class="text-black">Accueil</a> </li>
                         <li class="menu-nav__list-item menu-nav__list-item__user-navigation  "><a href="{{url_for('publierAnnonce')}}" class="text-black">Gerer Annonces</a> </li>
-                        <li class="menu-nav__list-item menu-nav__list-item__user-navigation "><a href="{{url_for('publierAnnonce')}}"class="text-black">publier Annonce</a> </li>
+                        <li class="menu-nav__list-item menu-nav__list-item__user-navigation "><a href="{{url_for('publierAnnonce')}}"class="text-black">publier Item</a> </li>
                         <li class="menu-nav__list-item menu-nav__list-item__user-navigation menu-nav__list-item__active"><a href="#" class="text-blue">Mes Favoris</a> </li>
                         <li class="menu-nav__list-item menu-nav__list-item__user-navigation "><a href="#" class="text-black">Mon Showroom</a> </li>
                         <li class="menu-nav__list-item menu-nav__list-item__user-navigation "><a href="#" class="text-black">Mon Profil</a> </li>
@@ -54,14 +54,14 @@
                         <br>
 
 
-                        {% for annonce in annonces_favoris %}
+                        {% for Item in annonces_favoris %}
 
-                        {% set img = annonce.img_url %}
-                                {% if not annonce.img_url : %}
+                        {% set img = Item.img_url %}
+                                {% if not Item.img_url : %}
                         {% set img = config['NO_PHOTO'] %}
                         {% endif %}
 
-                        {% if annonce.published == False : %}
+                        {% if Item.published == False : %}
                         {% set btn_class = 'primary' %}
                         {% set tap= '' %}
 
@@ -71,7 +71,7 @@
                         {% endif %}
 
 
-                        {% if annonce.deleted == False : %}
+                        {% if Item.deleted == False : %}
                         {% set btn_class_del = 'danger' %}
                         {% set tap_del= '' %}
 
@@ -85,11 +85,11 @@
 
                                 <div class="row pb-3 ">
                                         <div class="col-3">
-                                        <img class="d-block w-100" src="{{ img }}" alt="{{ annonce.img_title }}">
+                                        <img class="d-block w-100" src="{{ img }}" alt="{{ Item.img_title }}">
                                         </div>
 
                                         <div class="col-2">
-                                                <h4>{{ annonce.title }}</h4>
+                                                <h4>{{ Item.title }}</h4>
                                         </div>
 
                                         <div class="col-7">
@@ -100,7 +100,7 @@
                                 <div class="row pb-3 shadow mb-5 p-3 bg-secondary">
                                         <div class="col-4">
                                         <div class="btn-group dropup">
-                                          <a href="{{url_for('delete_favorite',favorite_id=annonce.id)}}" class="btn btn-{{ btn_class_del }} btn-sm {{tap_del}}">Supprimer Favori</a>
+                                          <a href="{{url_for('delete_favorite',favorite_id=Item.id)}}" class="btn btn-{{ btn_class_del }} btn-sm {{tap_del}}">Supprimer Favori</a>
                                                 
                                         </div>
         

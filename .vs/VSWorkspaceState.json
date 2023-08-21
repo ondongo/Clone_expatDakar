@@ -1,12 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\BasicsFlask",
-    "\\BasicsFlask\\mon_environ",
-    "\\BasicsFlask\\mon_environ\\Include",
-    "\\BasicsFlask\\templates",
-    "\\BasicsFlask\\templates\\pages"
+    "\\application",
+    "\\application\\templates",
+    "\\application\\templates\\back"
   ],
-  "SelectedNode": "\\Révision Python.ipynb",
+  "SelectedNode": "\\application\\templates\\back\\formAdd.html",
   "PreviewInSolutionExplorer": false
 }

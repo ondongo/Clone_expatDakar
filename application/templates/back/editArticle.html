@@ -36,16 +36,16 @@
 
                     
                     <div class="mx-2 ">
-                      <input type="hidden" value="{{ annonce.id }}" name="id_annonce">
+                      <input type="hidden" value="{{ Item.id }}" name="id_annonce">
                      
                         <h5 class="text-center mb-4">Sélectionnez une catégorie </h5>
-                        <p class="text-center mb-4">Remplissez toutes les informations nécessaires qui rendront votre annonce intéressante et unique.</p>
+                        <p class="text-center mb-4">Remplissez toutes les informations nécessaires qui rendront votre Item intéressante et unique.</p>
 
                     <label for="categorie">
                         Choisissez une catégorie</label>
                     <select class="form-control" name="categorie">
         
-                      <option value="{{ annonce.categorie }}" class="disabled" >{{ annonce.categorie }}</option>
+                      <option value="{{ Item.categorie }}" class="disabled" >{{ Item.categorie }}</option>
                       
 
 
@@ -59,7 +59,7 @@
                     <label for="sous_categorie">Sous-catégorie :</label>
                     <select name="sous_categorie" id="sous_categorie" class="form-control" >
                       
-                      <option value="{{ annonce.sousCategorie }}" class="disabled" >{{ annonce.sousCategorie }}</option>
+                      <option value="{{ Item.sousCategorie }}" class="disabled" >{{ Item.sousCategorie }}</option>
                       
                     </select>
                    
@@ -75,8 +75,8 @@
                     <div class="vr"></div>
 
                     <div class="mx-2 ">
-                        <h5 class="text-center mb-4">Télécharger des photos de votre annonce </h5>
-                              <p class="text-center mb-4">Une annonce avec une image de qualité obtient plus de visibilité et augmente <br>vos chances de vendre plus rapidement.
+                        <h5 class="text-center mb-4">Télécharger des photos de votre Item </h5>
+                              <p class="text-center mb-4">Une Item avec une image de qualité obtient plus de visibilité et augmente <br>vos chances de vendre plus rapidement.
                                 Les annonces avec photo attirent 5 fois plus de clients.</p>
       
                     </div>
@@ -89,7 +89,7 @@
     
         <!-- step two -->
         <div class="step">
-            <p class="text-center mb-4">Télécharger des photos de votre annonce</p>
+            <p class="text-center mb-4">Télécharger des photos de votre Item</p>
             <!--<div class= class="mb-3">
                 <label for="exampleFormControlFile1">img_url</label>
                 <input type="file" class="form-control-file" id="exampleFormControlFile1">
@@ -98,12 +98,12 @@
 
             <div class="mb-3">
               <label for="inputAddress">url l'image</label>
-            <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''"  name="img_url" placeholder="titre image" value="{{annonce.img_url}}">
+            <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''"  name="img_url" placeholder="titre image" value="{{Item.img_url}}">
             </div>
 
             <div class="mb-3">
               <label for="inputAddress">Titre l'image</label>
-            <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''" name="img_title" placeholder="titre image" value="{{annonce.img_title}}" >
+            <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''" name="img_title" placeholder="titre image" value="{{Item.img_title}}" >
             </div>
             
         </div>
@@ -112,20 +112,20 @@
     
         <!-- step three -->
         <div class="step">
-            <p class="text-center mb-4">Détails de l'annonce</p>
+            <p class="text-center mb-4">Détails de l'Item</p>
             
             <div class="mb-3">
                 <label for="inputAddress">Titre</label>
-              <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''" name="title" value="{{annonce.title}}">
+              <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''" name="title" value="{{Item.title}}">
               </div>
               <div class="mb-3">
                 <label for="inputAddress">Description</label>
-              <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''" name="description" value="{{annonce.description}}">
+              <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''" name="description" value="{{Item.description}}">
               </div>
 
               <div class="mb-3">
                 <label for="inputAddress">Prix</label>
-              <input type="number" class="form-control" id="inputAddress" oninput="this.className = ''"  step="500" name="prix" value="{{annonce.prix}}">
+              <input type="number" class="form-control" id="inputAddress" oninput="this.className = ''"  step="500" name="prix" value="{{Item.prix}}">
               </div>
 
                
@@ -145,12 +145,12 @@
 
           <div class="mb-3">
             <label for="inputAddress">lieu</label>
-          <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''" name="lieu" value="{{annonce.lieuPub}}">
+          <input type="text" class="form-control" id="inputAddress" oninput="this.className = ''" name="lieu" value="{{Item.lieuPub}}">
           </div>
 
           <div class="form-check mb-4 col-1">
             <label for="publish">Publier</label>
-            <input {% if annonce.published %} checked {% endif %} type="checkbox" class="form-check-input" name="publish" id="publish ">
+            <input {% if Item.published %} checked {% endif %} type="checkbox" class="form-check-input" name="publish" id="publish ">
           </div>
           <br>
         </div>

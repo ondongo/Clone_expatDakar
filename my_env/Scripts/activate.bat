@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\Hp\Desktop\Mes_Projets\Aly\my_env
+set VIRTUAL_ENV=C:\Users\Hp\Documents\Mes_Projets\Ecommerce_FlaskEldy\my_env
 
 if not defined PROMPT set PROMPT=$P$G
 

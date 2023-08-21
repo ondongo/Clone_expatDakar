@@ -48,8 +48,8 @@
                                   <div class="gallery__image__inner-container gallery__image__inner-container--main">
                                       <svg class="i i-beauty-products gallery__image__placeholder gallery__image__placeholder--custom" aria-hidden="true"><use xlink:href="https://www.expat-dakar.com/assets/ed-site/icons/category.1af8f532.svg#beauty-products"></use></svg>
                                       <div class="gallery__image__inner">
-                                          <!--image de l'annonce en question-->
-                                          <img class="gallery__image__resource vh-img" loading="eager" alt="Articles bébé image 1" src="{{annonce.img_url}}">
+                                          <!--image de l'Item en question-->
+                                          <img class="gallery__image__resource vh-img" loading="eager" alt="Articles bébé image 1" src="{{Item.img_url}}">
                                       </div>
                                   </div>
                               </li>
@@ -62,8 +62,8 @@
               <div class="listing-item__info">
                   <div class="listing-item__details">
                       <div class="listing-item__details__inner">
-                          <div class="listing-item__details__date">{{annonce.date}}</div>
-                          <div class="listing-item__details__ad-id">Référence de l'annonce : {{annonce.id}}</div>
+                          <div class="listing-item__details__date">{{Item.date}}</div>
+                          <div class="listing-item__details__ad-id">Référence de l'Item : {{Item.id}}</div>
                       </div>
                   </div>
 
@@ -119,25 +119,25 @@
 
                 </style>
 
-                <h1 class="d-flex justify-content-start text-warning listing-item__header">{{annonce.prix}} F Cfa</h1>
-                <h1 class="d-flex justify-content-start listing-item__header">{{annonce.title}}</h1>
+                <h1 class="d-flex justify-content-start text-warning listing-item__header">{{Item.prix}} F Cfa</h1>
+                <h1 class="d-flex justify-content-start listing-item__header">{{Item.title}}</h1>
   
                     <div class="listing-item__address">
-                        <span class="d-flex justify-content-start listing-item__address-location">{{annonce.lieuPub}}</span>
+                        <span class="d-flex justify-content-start listing-item__address-location">{{Item.lieuPub}}</span>
                     </div>
   
   
   
                     <div class="d-flex justify-content-start listing-item__title">Description</div>
                     <div class="d-flex justify-content-start listing-item__description">
-                        <p>{{annonce.description}}</p>
+                        <p>{{Item.description}}</p>
                     </div>
 
 
                 <small>
-                    <span class="text-primary">{{annonce.users.nom}}</span> |
+                    <span class="text-primary">{{Item.users.nom}}</span> |
                     <span class="text-secondary">11-01-2023 à 07:20:17</span> |
-                    <span class="text-warning">Vue : {{annonce.nbreVues}} fois</span> |
+                    <span class="text-warning">Vue : {{Item.nbreVues}} fois</span> |
                     <span class="text-danger">10 Commentaires</span>
                 </small>
             
@@ -185,8 +185,8 @@
                       <ul>
                           <li class="d-flex justify-content-start">Ne payez pas d’avance, même pour la livraison.</li>
                           <li class="d-flex justify-content-start">Rencontrez le vendeur dans un lieu public sûr.</li>
-                          <li class="d-flex justify-content-start">Inspectez l’annonce et assurez-vous que c’est exactement ce que vous voulez.</li>
-                          <li class="d-flex justify-content-start">Assurez-vous que l’annonce emballé est celui que vous avez inspecté.</li>
+                          <li class="d-flex justify-content-start">Inspectez l’Item et assurez-vous que c’est exactement ce que vous voulez.</li>
+                          <li class="d-flex justify-content-start">Assurez-vous que l’Item emballé est celui que vous avez inspecté.</li>
                           <li class="d-flex justify-content-start">Ne payez que si vous êtes satisfait.</li>
                       </ul>
                       <a href="https://www.expat-dakar.com/qui-sommes-nous" class="listing-item-safety__link" target="_blank">Lisez nos conseils de sécurité</a>
@@ -222,13 +222,13 @@
                                   <img src="https://th.bing.com/th/id/R.babb3d08bb51364499b5a3f62b5b8e20?rik=Wr9We6VA5HUc4g&pid=ImgRaw&r=0" width="80px" height="80px"/>
                               </span>
                           </div>
-                          <div class="listing-item-transparency__title">{{annonce.users.nom}}</div>
+                          <div class="listing-item-transparency__title">{{Item.users.nom}}</div>
                           <span class="listing-item-transparency__member-since">Membre depuis<br />Hier</span>
                       </div>
                       <div class="listing-item-transparency__verified">
                           <div class="listing-item-transparency__verified__title">Vérifié via : </div>
                           <div class="listing-item-transparency__verified__list">
-                              <svg class="i i-check listing-item-transparency__verified__icon" aria-hidden="true"><use xlink:href="https://www.expat-dakar.com/assets/ed-site/icons/map.caece3cf.svg#check"></use></svg>Numéro de portable : {{annonce.users.tel}}
+                              <svg class="i i-check listing-item-transparency__verified__icon" aria-hidden="true"><use xlink:href="https://www.expat-dakar.com/assets/ed-site/icons/map.caece3cf.svg#check"></use></svg>Numéro de portable : {{Item.users.tel}}
                           </div>
                       </div>
                   </div>
@@ -240,7 +240,7 @@
               <div class="listing-item-contact__contact-phone__title">Contacter par Téléphone</div>
 
               <div class="listing-item-contact__contact-phone__container listing-item-contact__contact-phone__container--visible">
-                  <a href="https://api.whatsapp.com/send?phone=+221{{annonce.users.tel}}&text=Bonjour%2C%20je%20suis%20intéressé%20par%20vos%20produits." class="mb-3 btn btn-whatsapp btn-block" href="">
+                  <a href="https://api.whatsapp.com/send?phone=+221{{Item.users.tel}}&text=Bonjour%2C%20je%20suis%20intéressé%20par%20vos%20produits." class="mb-3 btn btn-whatsapp btn-block" href="">
                       <svg class="i i-whatsapp btn__i btn__i--left" aria-hidden="true"><use xlink:href="https://www.expat-dakar.com/assets/ed-site/icons/map.caece3cf.svg#whatsapp"></use></svg>WhatsApp
                   </a>
               </div>
@@ -252,18 +252,18 @@
                         779744643</a>
                   </div>
               </div>
-              <form method="POST" action="https://www.expat-dakar.com/annonce/annonces-bebe-5547799/view-phone" >
+              <form method="POST" action="https://www.expat-dakar.com/Item/annonces-bebe-5547799/view-phone" >
                   <input name="_token" type="hidden" value="ifn1WoXGnqL6JKR2FO46SoZ8ulZPN9A1SfOdUHWc">
-                  <a href="tel:+221{{annonce.users.tel}}" type="submit" class="btn btn-primary btn-block listing-item-contact__contact-phone__show-btn">
+                  <a href="tel:+221{{Item.users.tel}}" type="submit" class="btn btn-primary btn-block listing-item-contact__contact-phone__show-btn">
                       <svg class="i i-phone btn__i btn__i--left" aria-hidden="true">
-                      <use xlink:href="tel:+221{{annonce.users.tel}}"></use>
+                      <use xlink:href="tel:+221{{Item.users.tel}}"></use>
                       </svg>Afficher le numéro</a>
               </form>
           </div>
               <div class="listing-item-contact__contact-chat">
                   <div class="listing-item-contact__contact-chat__title">Contacter via Chat</div>
                   <object class="listing-item-contact__contact-chat__container listing-item-contact__contact-chat__container--visible" alt="Contacter via Chat">
-                      <form method="GET" action="https://www.expat-dakar.com/compte/profile/mobile-verify/send" accept-charset="UTF-8" class="listing-item-contact__contact-chat__container-inner" data-t-enquiry-auth="" data-t-contact_type="chat" data-t-contact_context="listing" data-t-listing_id="5547799" data-t-listing_title="Articles bébé" data-t-listing_type="classified" data-t-listing_category_title="Enfant &amp; bébé" data-t-listing_category_slug="enfant-bebe" data-t-listing_slug="annonces-bebe" data-t-listing_price="0.00" data-t-listing_currency="XOF" data-t-listing_location_title="Hlm" data-t-listing_source="ed_sn" data-t-listing_product_slugs="listing" data-t-listing_context="view"><input name="redirect" type="hidden" value="https://www.expat-dakar.com/annonce/annonces-bebe-5547799"><input name="require_mobile_verified" type="hidden" value="1"><input name="trigger_contact[id]" type="hidden" value="5547799">
+                      <form method="GET" action="https://www.expat-dakar.com/compte/profile/mobile-verify/send" accept-charset="UTF-8" class="listing-item-contact__contact-chat__container-inner" data-t-enquiry-auth="" data-t-contact_type="chat" data-t-contact_context="listing" data-t-listing_id="5547799" data-t-listing_title="Articles bébé" data-t-listing_type="classified" data-t-listing_category_title="Enfant &amp; bébé" data-t-listing_category_slug="enfant-bebe" data-t-listing_slug="annonces-bebe" data-t-listing_price="0.00" data-t-listing_currency="XOF" data-t-listing_location_title="Hlm" data-t-listing_source="ed_sn" data-t-listing_product_slugs="listing" data-t-listing_context="view"><input name="redirect" type="hidden" value="https://www.expat-dakar.com/Item/annonces-bebe-5547799"><input name="require_mobile_verified" type="hidden" value="1"><input name="trigger_contact[id]" type="hidden" value="5547799">
                           <input name="trigger_contact[type]" type="hidden" value="chat">
                           <button type="submit" class="btn btn-primary btn-block listing-item-contact__contact-chat__show-btn" aria-label="Contacter via Chat">
                               <svg class="i i-chat btn__i btn__i--left" aria-hidden="true">
@@ -297,7 +297,7 @@
                       <form action="" method="POST">
                       
                         <input name="_token" type="hidden" value="ifn1WoXGnqL6JKR2FO46SoZ8ulZPN9A1SfOdUHWc">
-                        <a href="{{ url_for('ajouter_favoriBack', id_annonce=annonce.id) }}" type="submit" class="btn btn-secondary btn-block">
+                        <a href="{{ url_for('ajouter_favoriBack', id_annonce=Item.id) }}" type="submit" class="btn btn-secondary btn-block">
                             <i class="fa-solid fa-heart" style="color: #ff0000;"></i> Favoris
                         </a>
                         
@@ -332,7 +332,7 @@
               <div class="listing-page__sidebar__inner listing-page__sidebar__inner--report">
                   <div class="listing-item-report">
                       <a href="#report" class="btn btn-secondary btn-block listing-item-report__link" data-listing-report-abuse="">
-                          <svg class="i i-alert listing-item-report__link-icon" aria-hidden="true"><use xlink:href="https://www.expat-dakar.com/assets/ed-site/icons/map.caece3cf.svg#alert"></use></svg>Signaler cette annonce</a>
+                          <svg class="i i-alert listing-item-report__link-icon" aria-hidden="true"><use xlink:href="https://www.expat-dakar.com/assets/ed-site/icons/map.caece3cf.svg#alert"></use></svg>Signaler cette Item</a>
                   </div>
               </div>
           </div>

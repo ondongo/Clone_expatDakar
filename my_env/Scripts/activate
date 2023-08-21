@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\Hp\Desktop\Mes_Projets\Aly\my_env"
+VIRTUAL_ENV="C:\Users\Hp\Documents\Mes_Projets\Ecommerce_FlaskEldy\my_env"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

@@ -1,4 +1,4 @@
-{% extends "layout/b404.html" %}
+{% extends "layout/baseEldy.html" %}
 
 {% block title %}
     {{super()}} | 404
@@ -9,7 +9,7 @@
 
 <br><br>
 <div style="text-align:center">
-    <h1 style="color: #f29541;
+    <h1 style="color: #d85629;
    
     font-size: 9rem;
     font-weight: 700;
@@ -25,7 +25,7 @@
         <br>
         Corrigeons ça </p>
 
-        <a href="{{url_for('index')}}" class="btn" style="background-color: #f29541;border: 1px solid transparent;border-color: #f29541;
+        <a href="{{url_for('index')}}" class="btn" style="background-color:#d85629;border: 1px solid transparent;border-color: #d85629;
         color: #fff;display: inline-block;">Retour à l'Accueil</a>
     </div>
 {% endblock content %}

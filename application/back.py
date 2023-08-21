@@ -1,8 +1,8 @@
 import dbm
-from .front import app,socketio
+from .front import app
 
 from flask import render_template, request, redirect, url_for, flash,session
-from application.models.EnumEtatArticle import *
+from application.models.EnumColorAndSize import *
 from application.models.EnumCategorie import *
 from application.models.SousCategorie import *
 from .front import app
@@ -23,17 +23,16 @@ login_manager.login_message_category = 'info'
 # =====================================================================
 
 from application.models.model import(
-    Annonce,
+    CartItem,
+    Item,
     Favorite,
-    saveMessage,
-    Message,
-    Restaurant,
     ajouter_favori,
     findAnnonceById,
     saveAnnonce,
     getAllAnnoncePublier,
     getAllAnnonceBrouillon,
     getAllAnnonceDel,
+    transfer_session_cart_to_db_cart,
     un_delete,
     un_deleteFavorite,
     un_published,
@@ -41,19 +40,19 @@ from application.models.model import(
     
     User,
     saveUser,
-    addResto
+
     
 )
 
 
 
 listcategories=list(EnumCategorie)
-listEtats=list(EnumEtatArticle)
+#listEtats=list(EnumEtatArticle)
 
 
 
 # =====================================================================
-# =============================Publier Annonce Flask + JS===========================
+# =============================Publier Item Flask + JS===========================
 # =====================================================================
 
 @app.route('/admin/add/<categorie>', methods=['GET', 'POST'],defaults={"id_annonce":0,"categorie":None})
@@ -62,48 +61,19 @@ listEtats=list(EnumEtatArticle)
 def publierAnnonce(id_annonce, categorie):
     
     
-        annonce = findAnnonceById(id_annonce)
+        Item = findAnnonceById(id_annonce)
         sous_categories = []
         recupcategories = categorie
         if request.method == 'GET':
             # ============01
-            if categorie == 'Vehicules':
-                sous_categories = SousCategorieVehicule.__members__.values()
+            if categorie == 'hommes':
+                sous_categories = SousCategorieHomme.__members__.values()
             # ===========02
-            elif categorie == 'Sport_Loisirs_Voyages':
-                sous_categories = SousCategorieSport_Loisirs_Voyages.__members__.values()
-            # =============03 
-            elif categorie == 'Services':
-                sous_categories = SousCategorieService.__members__.values()
-            # =============04
-            elif categorie == 'Offres_Emploi':
-                sous_categories = SousCategorieOffreEmploi.__members__.values()
-            # =============05   
-            elif categorie == 'Multimedia':
-                sous_categories = SousCategorieMultimedia.__members__.values()
-            # =============06   
-            elif categorie == 'Mode_Beaute':
-                sous_categories = SousCategorieMode.__members__.values()
-            # =============07   
-            elif categorie == 'Equipements':
-                sous_categories = SousCategorieMateriaux.__members__.values()
-            # =============08   
-            elif categorie == 'Maison':
-                sous_categories = SousCategorieMaison.__members__.values()
-            # =============09
-            elif categorie == 'Immobilier':
-                sous_categories = SousCategorieImmobilier.__members__.values()
-            # =============10   
-            elif categorie == 'Demande_Emploi':
-                sous_categories = SousCategorieDemande.__members__.values()
-            # =============11
-            elif categorie == 'Animaux':
-                sous_categories = SousCategorieAnimaux.__members__.values()
-            # =============12
-            elif categorie == 'AgroAlimentaire':
-                sous_categories = SousCategorieAgroalimentaire.__members__.values()
+            elif categorie == 'femmes':
+                sous_categories = SousCategorieFemmme.__members__.values()
+          
     
-        return render_template("/back/formAdd.html",annonce=annonce,listcategories=listcategories,listEtats=listEtats,sous_categories=sous_categories,recupcategories=recupcategories)
+        return render_template("/back/formAdd.html",Item=Item,listcategories=listcategories,sous_categories=sous_categories,recupcategories=recupcategories)
 
 
 
@@ -111,32 +81,30 @@ def publierAnnonce(id_annonce, categorie):
 
 
 # =====================================================================
-# =============================Edit Annonce===========================
+# =============================Edit Item===========================
 # =====================================================================
 
 
 @app.route('/admin/edit/<int:id_annonce>', methods=['GET', 'POST'])
 @login_required
 def editAnnonce(id_annonce):
-    annonce = Annonce.query.get(id_annonce)
-    return render_template("/back/editArticle.html", annonce=annonce, listcategories=listcategories, listEtats=listEtats)
+    Item = Item.query.get(id_annonce)
+    return render_template("/back/editArticle.html", Item=Item, listcategories=listcategories)
 
 @app.route("/edit", methods=["POST"])
 def edit():
     id_annonce = request.form.get("id_annonce")
-    annonce = Annonce.query.get(id_annonce)
-    if annonce:
-        annonce.title = request.form.get("title")
-        annonce.categorie = request.form.get("categorie")
-        annonce.sousCategorie = request.form.get("sous_categorie")
-        annonce.description = request.form.get("description")
-        annonce.prix = request.form.get("prix")
-        annonce.published = False if not request.form.get("publish") else True
-        annonce.img_url = request.form.get("img_url")
-        annonce.img_title = request.form.get("img_title")
-        annonce.etat = request.form.get("etat")
-        annonce.lieuPub = request.form.get("lieu")
-        editAnnonceModel(annonce)
+    Item = Item.query.get(id_annonce)
+    if Item:
+        Item.title = request.form.get("title")
+        Item.categorie = request.form.get("categorie")
+        Item.sousCategorie = request.form.get("sous_categorie")
+        Item.description = request.form.get("description")
+        Item.prix = request.form.get("prix")
+        Item.published = False if not request.form.get("publish") else True
+        Item.img_url = request.form.get("img_url")
+        Item.img_title = request.form.get("img_title")
+        editAnnonceModel(Item)
     return redirect(url_for("gestionAnnonce"))
 
 
@@ -152,9 +120,6 @@ def save():
     publish_form = request.form.get("publish")
     img_url_form = request.form.get("img_url")
     img_title_form = request.form.get("img_title")
-    etat_form= request.form.get("etat")
-    lieuPub_form=request.form.get("lieu")
-
     # if not publish_form:
     #     publish_form = False
     # else:
@@ -162,8 +127,8 @@ def save():
 
     publish_form = False if not publish_form else True
 
-    # Creer un objet de type Annonce
-    new_annonce = Annonce(
+    # Creer un objet de type Item
+    new_annonce = Item(
         title=title_form,
         description=description_form ,
         prix=prix_form,
@@ -171,33 +136,38 @@ def save():
         img_url=img_url_form,
         img_title=img_title_form,
         categorie=categorie_form,
-        etat=etat_form,
-        lieuPub=lieuPub_form,
         user_id=current_user.id,
         sousCategorie=sous_categorie_form
         # datePub=datetim
     )
     
     saveAnnonce(new_annonce)
-    return redirect(url_for("publierAnnonce"))
+    return redirect(url_for("gestionArticle"))
     
 
 
 # =====================================================================
-# =============================Gerer Annonce Admin
+# =============================Gerer Item Admin
 # -===========================
 # =====================================================================  
-
-
-@app.route('/admin/listings')
-@login_required
-def gestionAnnonce():
-   
-        annonces =(
-        Annonce.query.filter(Annonce.published == 1, Annonce.deleted == 0,Annonce.user_id==current_user.id).order_by((Annonce.datePub)).all())
-        count_publier=len(annonces)
-        return render_template("/back/gestionAnnonce.html",annonces=annonces,listcategories=listcategories,listEtats=listEtats,count_publier=count_publier)
  
+@app.route('/admin/gestion')
+@login_required
+def gestionArticle():
+        annonces =(
+        Item.query.filter(Item.published == 1, Item.deleted == 0,Item.user_id==current_user.id).order_by((Item.datePub)).all())
+        count_publier=len(annonces)
+        return render_template("/back/gesArticle.html",annonces=annonces,listcategories=listcategories,count_publier=count_publier)
+ 
+@app.route('/admin/dashboard')
+@login_required
+def gestiondash():
+        annonces =(
+        Item.query.filter(Item.published == 1, Item.deleted == 0,Item.user_id==current_user.id).order_by((Item.datePub)).all())
+        count_publier=len(annonces)
+        return render_template("/back/dashboard.html",annonces=annonces,listcategories=listcategories,count_publier=count_publier)
+ 
+
 
 
 #************************************ListCorbeille***********************************
@@ -206,7 +176,7 @@ def gestionAnnonce():
 def gestionAnnonce_Corbeille():
         annonces =getAllAnnonceDel()
         count_corbeille =len(annonces)
-        return render_template("/back/gestionAnnonce.html",annonces=annonces,listcategories=listcategories,listEtats=listEtats,count_corbeille=count_corbeille)
+        return render_template("/back/gestionAnnonce.html",annonces=annonces,listcategories=listcategories,count_corbeille=count_corbeille)
     
 
 #************************************Brouillon ***********************************
@@ -215,21 +185,21 @@ def gestionAnnonce_Corbeille():
 def gestionAnnonce_Brouillon():
         annonces =getAllAnnonceBrouillon()
         count_brouillon =len(annonces)
-        return render_template("/back/gestionAnnonce.html",annonces=annonces,listcategories=listcategories,listEtats=listEtats,count_brouillon=count_brouillon)
+        return render_template("/back/gestionAnnonce.html",annonces=annonces,listcategories=listcategories,count_brouillon=count_brouillon)
 
 
 
 
 
 #************************************Delete ***********************************
-@app.route("/admin/annonce/<int:id_annonce>/delete")
+@app.route("/admin/Item/<int:id_annonce>/delete")
 def un_deleteAnnonce(id_annonce):
     un_delete(id_annonce)
     return redirect(url_for("gestionAnnonce"))
 
 
 #************************************Publish ***********************************
-@app.route("/admin/annonce/<int:id_annonce>/publish")
+@app.route("/admin/Item/<int:id_annonce>/publish")
 def un_publishAnnonce(id_annonce):
     un_published(id_annonce)
     return redirect(url_for("gestionAnnonce"))
@@ -238,9 +208,9 @@ def un_publishAnnonce(id_annonce):
 @app.route('/recherche-annonceAvancee')
 def recherche_annonAvancee():
     query = request.args.get('searchAvance')
-    annonces=(Annonce.query.filter( Annonce.user_id==current_user.id,
-                                   Annonce.title.ilike(f"%{query}%"))
-        .order_by(desc(Annonce.datePub))
+    annonces=(Item.query.filter( Item.user_id==current_user.id,
+                                   Item.title.ilike(f"%{query}%"))
+        .order_by(desc(Item.datePub))
         .all())
     count =len(annonces)
     return render_template("/back/gestionAnnonce.html",annonces=annonces,count=count)
@@ -293,35 +263,71 @@ def creation_compte():
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-@app.route("/login", methods = ["GET","POST"])
+
+
+@app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == 'POST':
         login = request.form['login']
         password = request.form['pass']
-        tel=request.form['tel']
-        user = User.query.filter_by(login= login, tel=tel).first()
-        if user is None or not user.check_password(password):
-            flash('Login ou mot de passe incorrect')
-            return render_template('/back/login.html')
-        else:
-            # Log the user in
+        tel = request.form['tel']
+        user = User.query.filter_by(login=login, tel=tel).first()
+        
+        if user and user.check_password(password):
             login_user(user)
+            
+            # Check for and transfer session cart to database cart
+            if 'panier' in session:
+                transfer_session_cart_to_db_cart(user.id, session['panier'])
+                session.pop('panier')
+                session.pop('total')
 
             return redirect(url_for('index'))
+        else:
+            flash('Login ou mot de passe incorrect')
+            return render_template('/back/login.html')
     else:
         return render_template("/back/login.html")
 
-#*****************************Deconnexion *********************************** 
+# Deconnexion
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('index'))
 
+# Gestion du panier
+@app.route("/add_panier/<int:id>")
+def add_panier(id):
+    if 'panier' not in session:
+        session['panier'] = []
+        session['total'] = 0.0
+    
+    product = Item.query.get(id)
+    if product:
+        session['panier'].append(id)
+        session['total'] += float(product.prix)
+    
+    return redirect(url_for('index'))
 
 
+@app.route("/remove_from_cart/<int:id>")
+def remove_from_cart(id):
+    if 'panier' in session:
+        session['panier'].remove(id)
+        product = Item.query.get(id)
+        if product:
+            session['total'] -= float(product.prix)
+        return redirect(url_for('cart'))
+    return redirect(url_for('index'))
 
-
+@app.route("/Panier")
+def Panier():
+    items_in_cart = []
+    if 'panier' in session:
+        items_in_cart = [Item.query.get(item_id) for item_id in session['panier']]
+    
+    return render_template("/pages/panier.html", items_in_cart=items_in_cart)
 
 # ===================================================================
 # =============================404 Error=========================================
@@ -345,10 +351,10 @@ def articles_favoris():
     user = User.query.get(current_user.id)
     annonces_favoris = user.favorites
     list_favoris = []
-    for annonce in annonces_favoris:
-        list_favoris.append(annonce.id)
+    for Item in annonces_favoris:
+        list_favoris.append(Item.id)
     # Retrieve the information of the articles in the ids_articles_favoris list
-    annonce_favoris_info = Annonce.query.filter(Annonce.id.in_(list_favoris)).all()
+    annonce_favoris_info = Item.query.filter(Item.id.in_(list_favoris)).all()
     count_fav=len(annonce_favoris_info)
     # Render the template with the list of articles in favoris
     return render_template('/back/favori.html', annonces_favoris=annonce_favoris_info,count_fav=count_fav)
@@ -358,12 +364,12 @@ def articles_favoris():
 @app.route('/ajouter_favoriBack/<int:id_annonce>', methods=['GET','POST'])
 @login_required
 def ajouter_favoriBack(id_annonce):
-    annonce = Annonce.query.get(id_annonce)
+    Item = Item.query.get(id_annonce)
     user = User.query.get(current_user.id)
-    if annonce not in user.favorites:
-        favorite = Favorite(annonce_id=annonce.id, user_id=current_user.id)
+    if Item not in user.favorites:
+        favorite = Favorite(annonce_id=Item.id, user_id=current_user.id)
         ajouter_favori(favorite)
-        flash("L'annonce a été ajoutée à vos favoris avec succès", 'success')
+        flash("L'Item a été ajoutée à vos favoris avec succès", 'success')
         return redirect(url_for('articles_favoris'))
     else:
         flash('Impossible Deja en favori')
@@ -388,127 +394,3 @@ def delete_favorite(favorite_id):
     return redirect(url_for('articles_favoris'))
 
 
-
-
-
-
-
-
-
-
-
-# ===================================================================
-# =============================Restaurant  =========================================
-# =====================================================================
-
-#************************************SaveRestaurant ***********************************
-
-@app.route('/admin/addResto', methods=['GET', 'POST'])
-@login_required
-def publierResto():
-    return render_template("back/CreerRestaurant.html")
-    
-    
-@app.route("/saveRestaurant", methods=["POST"])
-def saveRestaurant():
-   
-    #id_annonce = request.form.get("id_annonce")
-    nom_form = request.form.get("title")
-    cat_form = request.form.get("cat")
-   
-    description_form = request.form.get("description")
-    lieu_form = request.form.get("lieu")
-    img_url_form = request.form.get("img_url")
-    img_title_form = request.form.get("img_title")
-    ouverture_form= request.form.get("ouverture")
-    fermeture_form=request.form.get("fermeture")
-    publish_form=request.form.get("publish")
-
-    # if not publish_form:
-    #     publish_form = False
-    # else:
-    #     publish_form = True
-
-    publish_form = False if not publish_form else True
-
-    # Creer un objet de type Annonce
-    
-    new_restaurant = Restaurant(
-        Categorie_Restaurant=cat_form,
-        Nom_Restaurant=nom_form,
-        description_Restaurant=description_form ,
-       
-        published=publish_form,
-        img_url=img_url_form,
-        img_title=img_title_form,
-       Opening_hours=ouverture_form,
-       Fermeture_hours=fermeture_form,
-        adresse= lieu_form ,
-        user_id=current_user.id,
-     
-        # datePub=datetim
-    )
-    
-    addResto(new_restaurant)
-    return redirect(url_for("publierResto"))
-
-
-# ===================================================================
-# =============================Chat Envoye Recevoir  =========================================
-# =====================================================================
-
-@app.route('/messages/<recipient_id>', methods=['GET', 'POST'])
-@login_required
-def messages(recipient_id):
-    recipient = User.query.get(recipient_id)
-    if request.method == 'POST':
-        sender_id = request.form['sender_id']
-        content = request.form['content']
-        message = Message(sender_id=sender_id, recipient_id=recipient_id, content=content)
-        saveMessage(message)
-    messages = Message.query.filter(
-        (Message.sender_id == recipient_id and Message.recipient_id == current_user.id) or
-        (Message.sender_id == current_user.id and Message.recipient_id == recipient_id)
-    ).order_by(Message.timestamp.asc()).all()
-    return render_template('pages/chat.html', recipient=recipient, messages=messages)
-
-        
-@app.route('/chat/<recipient_id>')
-def chatAdmin(recipient_id):
-    # Récupérer le destinataire (utilisateur avec l'identifiant recipient_id)
-    recipient = User.query.get(recipient_id)
-
-    # Récupérer les messages échangés entre l'utilisateur courant et le destinataire
-    messages = Message.query.filter(
-        (Message.sender == current_user and Message.recipient == recipient) |
-        (Message.sender == recipient and Message.recipient == current_user)
-    ).all()
-
-    return render_template('back/chat.html', recipient=recipient, messages=messages)
-
-
-
-
-@app.route('/chat/send', methods=['POST'])
-def send_messageBack():
-    # Récupérer l'identifiant du destinataire à partir du formulaire
-    recipient_id = request.form.get('recipient_id')
-
-    # Récupérer le contenu du message à partir du formulaire
-    content = request.form.get('content')
-
-    # Récupérer l'utilisateur courant (expéditeur)
-    sender = current_user
-
-    # Récupérer le destinataire
-    recipient = User.query.get(recipient_id)
-
-    # Créer un nouveau message
-    message = Message(sender=sender, recipient=recipient, content=content)
-    saveMessage(message)
-
-    # Rediriger vers la page de chat avec le destinataire
-    return redirect(url_for('chatAdmin', recipient_id=recipient_id))
-        
-        
-        

@@ -1,4 +1,4 @@
-from application.models.EnumEtatArticle import *
+from application.models.EnumColorAndSize import *
 from application.models.EnumCategorie import *
 from config import *
 annonces = [
@@ -9,7 +9,7 @@ annonces = [
         "prix":1500,
         "etat":EnumEtatArticle.Reconditione.name,
         "categorie":EnumCategorie.Vehicules.name,
-        "description": "Voici  le contenu de l'Annonce 1",
+        "description": "Voici  le contenu de l'Item 1",
         "datePub": "15/03/2023",
         "lieuPub":"medina"
     },
@@ -20,7 +20,7 @@ annonces = [
         "prix":25000,
         "etat":EnumEtatArticle.Neuf.name,
         "categorie":EnumCategorie.Vehicules.name,
-        "description": "Voici  le contenu de l'Annonce 2",
+        "description": "Voici  le contenu de l'Item 2",
         "datePub": "12/03/2023",
          "lieuPub":"medina"
     },

@@ -10,31 +10,45 @@
         <!-- Favicon -->
         <link href="img/favicon.ico" rel="icon">
     
-       
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+     
+    <title>{{config['APP_NAME']}}</title>
 
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/expat.css') }}">
- 
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cookie&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="{{ url_for('static',filename='eldyCss/css/bootstrap.min.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ url_for('static',filename='eldyCss/css/font-awesome.min.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ url_for('static',filename='eldyCss/css/elegant-icons.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ url_for('static',filename='eldyCss/css/jquery-ui.min.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ url_for('static',filename='eldyCss/css/magnific-popup.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ url_for('static',filename='eldyCss/css/owl.carousel.min.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ url_for('static',filename='eldyCss/css/slicknav.min.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ url_for('static',filename='eldyCss/css/style.css') }}" type="text/css" />
 
     </head>
     <body style="background-color: #f0f0f0;">
 
-        <div class="row d-flex align-items-center py-2 px-xl-5 bg-white" style="
+        <div class="row d-flex align-items-center bg-white" style="
    
         
         
         box-shadow: 0 1px 1px rgba(0,0,0,.11),0 2px 2px rgba(0,0,0,.11),0 4px 4px rgba(0,0,0,.11),0 6px 8px rgba(0,0,0,.11),0 8px 16px rgba(0,0,0,.11);
         color: #fff;
-        height:62px;
+        height:100px;
         ">
 
             <div class="col-12"
            style="display:flex;justify-content:center;" >
                
-           <a href="{{url_for('index')}}" >   <img class="img-fluid" src="{{ url_for('static',filename='img/expat.jpg') }}" alt="Image" style="height:42px "></a>
+           <a href="{{url_for('index')}}" >   <img class="img-fluid" src="{{ url_for('static',filename='eldyCss/img/logo.png') }}" width="150px" height="50px" alt="Image"></a>
                    
                     
             </div>

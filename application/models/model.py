@@ -7,160 +7,90 @@ import logging as log
 from sqlalchemy import desc
 from flask_login import UserMixin, current_user
 
+from application.models.EnumColorAndSize import EnumColor, EnumSize
+
 db = SQLAlchemy(app)
 
 
 
 class Favorite(db.Model):
-    __tablename__ = "favorite" 
+    __tablename__ = "favorites"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    annonce_id = db.Column(db.Integer, db.ForeignKey('annonces.id'))
-  
-# Creation des Models
-class Annonce(db.Model):
-    __tablename__ = "annonces" 
-    # Au cas ou on change le nom de la table
+    annonce_id = db.Column(db.Integer, db.ForeignKey('items.id'))
+
+class Size(db.Model):
+    __tablename__ = "sizes"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Enum(EnumSize), nullable=False)
+    item_id = db.Column(db.Integer, db.ForeignKey('items.id'))
+
+class Color(db.Model):
+    __tablename__ = "colors"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Enum(EnumColor), nullable=False)
+    item_id = db.Column(db.Integer, db.ForeignKey('items.id'))
+
+class Item(db.Model):
+    __tablename__ = "items"
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text)
-    prix=db.Column(db.Float(1000),nullable=True)
+    prix = db.Column(db.Float, nullable=True)
     categorie = db.Column(db.String(200))
     sousCategorie = db.Column(db.String(200))
-    etat = db.Column(db.String(200),nullable=True)
-    img_url = db.Column(db.String(255),nullable=True)
-    img_title = db.Column(db.String(100),nullable=True)
+    img_url = db.Column(db.String(255), nullable=True)
+    img_title = db.Column(db.String(100), nullable=True)
     datePub = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-    lieuPub=db.Column(db.String(200))
     published = db.Column(db.Boolean, default=True)
     deleted = db.Column(db.Boolean, default=False)
     nbreVues = db.Column(db.Integer, default=0)
-    favorites = db.relationship('Favorite', backref='annonces', lazy='dynamic')
-    #clé étrangère qui lie l'annonce à l'utilisateur qui l'a publié.
+    favorites = db.relationship('Favorite', backref='item', lazy='dynamic')
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    #ratings = db.relationship('Ratings', backref='annonces', lazy='dynamic')
+    sizes = db.relationship('Size', backref='item')
+    colors = db.relationship('Color', backref='item')
 
-
-
-    
-
-
-# Creation du model User
-class User(db.Model,UserMixin):
+class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(200), nullable=False)
-    prenom  = db.Column(db.String(200), nullable=False)
-    tel  = db.Column(db.String(200), nullable=False)
+    prenom = db.Column(db.String(200), nullable=False)
+    tel = db.Column(db.String(200), nullable=False)
     login = db.Column(db.String(200), nullable=False)
     password = db.Column(db.String(5000), nullable=False)
     active = db.Column(db.Boolean, default=True)
-    #==============-------Chaque fois que l'utilisateur publie ça compte si ça arrive à 100 passe le Vip
-    NbreAnnoncePub=db.Column(db.Integer, default=0)
-    favorites = db.relationship('Favorite', backref='users', lazy='dynamic')
-    annonces = db.relationship('Annonce', backref='users', lazy=True)
-    boutiques = db.relationship('Boutique', backref='users', lazy=True)
-    restaurant = db.relationship('Restaurant', backref='users', lazy=True)
-    messages_sent = db.relationship('Message', backref='sender', foreign_keys='Message.sender_id', lazy=True)
-    messages_received = db.relationship('Message', backref='recipient', foreign_keys='Message.recipient_id', lazy=True)
+    NbreAnnoncePub = db.Column(db.Integer, default=0)
+    favorites = db.relationship('Favorite', backref='user', lazy='dynamic')
+    items = db.relationship('Item', backref='user', lazy=True)
 
-   
-    #======= Pour faire le systeme d etoiles
-   # ratings = db.relationship('Ratings', backref='users', lazy='dynamic')
-
-
-
-    
-    
-    
-    
     def __repr__(self):
-        return f"<User : {self.login}>"
-    
+        return f"<User: {self.login}>"
+
     def check_password(self, password):
         return hashlib.md5(password.encode('utf-8')).hexdigest() == self.password
-    
-    def send_message(self, recipient, content):
-        message = Message(sender=self, recipient=recipient, content=content)
-        db.session.add(message)
-        db.session.commit()
 
-
-
-
-
-
-class Message(db.Model):
+class CartItem(db.Model):
+    __tablename__ = "cart_items"
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
-    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-
-    def __repr__(self):
-        return f"Message('{self.content}', '{self.timestamp}')"
-    
- #constructeur
-    # def __init__(self, nom, prenom, tel, email, password) :
-    #     self.nom = nom
-    #     self.prenom = prenom
-    #     self.tel = tel
-    #     self.email = email
-    #     self.password = password
-    
-    
-#============Save objet de type article====================
-def saveMessage(message: Message):
-    db.session.add(message)
-    db.session.commit()
-    
-    
-class Boutique(db.Model):
-    __tablename__ = "boutique" 
-    id = db.Column(db.Integer, primary_key=True)
-    title_entreprise = db.Column(db.String(200), nullable=False, unique=True)
-    description_Entreprise = db.Column(db.Text)
-    prix=db.Column(db.Float(1000))
-    type_boutique = db.Column(db.String(200))
-    img_url = db.Column(db.String(255))
-    img_title = db.Column(db.String(100))
-    Directions=db.Column(db.String(200))
-    adresse_postale=db.Column(db.String(200))
-    Instagram_name=db.Column(db.String(200))
-    Opening_hours=db.Column(db.String(200))
-    published = db.Column(db.Boolean, default=True)
-    deleted = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    annonce_id = db.Column(db.Integer, db.ForeignKey('items.id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+    item = db.relationship('Item')
 
-class Restaurant(db.Model):
-    __tablename__ = "restaurant" 
+class Order(db.Model):
+    __tablename__ = "orders"
     id = db.Column(db.Integer, primary_key=True)
-    Categorie_Restaurant = db.Column(db.String(200), nullable=False)
-    Nom_Restaurant = db.Column(db.String(200), nullable=False, unique=True)
-    description_Restaurant = db.Column(db.Text)
-    img_url = db.Column(db.String(255))
-    img_title = db.Column(db.String(100))
-    Opening_hours=db.Column(db.String(200))
-    Fermeture_hours=db.Column(db.String(200))
-    
-    adresse=db.Column(db.String(200))
-    published = db.Column(db.Boolean, default=True)
-    deleted = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    total_amount = db.Column(db.Float, nullable=False)
+    items = db.relationship('OrderItem', backref='order', lazy=True)
 
-# class Ratings(db.Model):
-#     __tablename__ = "ratings" 
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-#     annonce_id = db.Column(db.Integer, db.ForeignKey('annonces.id'))
-  
-# ----------Pas besoin
-# class Commande(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-   
-# class Payement(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-  
+class OrderItem(db.Model):
+    __tablename__ = "order_items"
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
+    annonce_id = db.Column(db.Integer, db.ForeignKey('items.id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    item = db.relationship('Item')
 
 
 # =====================================================================
@@ -188,17 +118,17 @@ class Restaurant(db.Model):
 #************************************Annonces ***********************************
 # ========-----Afficher tous les articles
 def getAllAnnonce():
-    return Annonce.query.all()
+    return Item.query.all()
 
 def getAllAnnonceRecent():
-    return Annonce.query.order_by(desc(Annonce.datePub)).all()
+    return Item.query.order_by(desc(Item.datePub)).all()
 
 #========-------Publish
 #Visit
 def getAllAnnoncePublier():
     return (
-        Annonce.query.filter(Annonce.published == 1, Annonce.deleted == 0)
-        .order_by(desc(Annonce.datePub))
+        Item.query.filter(Item.published == 1, Item.deleted == 0)
+        .order_by(desc(Item.datePub))
         .all()
     )
 
@@ -208,8 +138,8 @@ def getAllAnnoncePublier():
 #=====-----RequeteCorbeille
 def getAllAnnonceDel():
     return  (
-        Annonce.query.filter(Annonce.deleted == 1,Annonce.user_id==current_user.id)
-        .order_by(desc(Annonce.datePub))
+        Item.query.filter(Item.deleted == 1,Item.user_id==current_user.id)
+        .order_by(desc(Item.datePub))
         .all()
     )
 
@@ -218,87 +148,73 @@ def getAllAnnonceDel():
 def getAllAnnonceBrouillon():
     return (
         
-        Annonce.query.filter(Annonce.published == 0, Annonce.deleted == 0,Annonce.user_id==current_user.id)
-        .order_by(desc(Annonce.datePub))
+        Item.query.filter(Item.published == 0, Item.deleted == 0,Item.user_id==current_user.id)
+        .order_by(desc(Item.datePub))
         .all()
     )
 
 
 #=======-------------Afficher l'article qui a cet id
 def findAnnonceById(id_annonce):
-    annonce = Annonce.query.get(id_annonce)
-    if annonce is not None:
-        annonce.nbreVues += 1
+    item = Item.query.get(id_annonce)
+    if Item is not None:
+        Item.nbreVues += 1
         db.session.commit()
-    return annonce
+    return item
 
 # def solution(id_annonce):
-#     return Annonce.query.get(id_annonce)
+#     return Item.query.get(id_annonce)
 
 
 def getAllAnnonceA_La_Une():
     return (
-            Annonce.query.order_by(desc(Annonce.nbreVues)).limit(5).all()
+            Item.query.order_by(desc(Item.nbreVues)).limit(5).all()
         )
 
-# =====================================================================
-# =====================Publier/Modifier/Supprimer==============
-
-
-# def getAnnoncesByDate(date):
-#     date_obj = date.strftime("%d-%m-%Y à %H:%M%:%S")
-#     return Annonce.query.filter(Annonce.datePub == date_obj).all()
-
-
 
 
 #============Save objet de type article====================
-def saveAnnonce(annonce: Annonce):
-    db.session.add(annonce)
+def saveAnnonce(Item: Item):
+    db.session.add(Item)
     db.session.commit()
     
-    
-#============Save objet de type article====================
-def addResto(resto: Restaurant):
-    db.session.add(resto)
-    db.session.commit()
 
 
-#==============================---------Modifier Annonce
+#==============================---------Modifier Item
 
-def editAnnonceModel(annonce:Annonce):
-    old_annonce = Annonce.query.get(annonce.id)
+def editAnnonceModel(Item:Item):
+    old_annonce = Item.query.get(Item.id)
     #
-    old_annonce.title = annonce.title
-    old_annonce.description = annonce.description
-    old_annonce.published = annonce.published
-    old_annonce.img_title = annonce.img_title
-    old_annonce.img_url = annonce.img_url
-    old_annonce.prix = annonce.prix
-    old_annonce.categorie = annonce.categorie
-    old_annonce.lieuPub = annonce.lieuPub
-    old_annonce.etat = annonce.etat
+    old_annonce.title = Item.title
+    old_annonce.description = Item.description
+    old_annonce.published = Item.published
+    old_annonce.img_title = Item.img_title
+    old_annonce.img_url = Item.img_url
+    old_annonce.prix = Item.prix
+    old_annonce.categorie = Item.categorie
+    old_annonce.lieuPub = Item.lieuPub
+    old_annonce.etat = Item.etat
     db.session.commit()
 
 #==========---------Faire passer à publier
 
 def un_published(id_annonce):
-    annonce = Annonce.query.get(id_annonce)
+    Item = Item.query.get(id_annonce)
 
     # Tester si c'est une publication:
-    if not annonce.published:
-        annonce.datePub = datetime.datetime.utcnow()
+    if not Item.published:
+        Item.datePub = datetime.datetime.utcnow()
 
-    annonce.published = not annonce.published
+    Item.published = not Item.published
     db.session.commit()
 
 
 
 #=======---------Mettre à la Corbeille=======CoteModel
 def un_delete(id_annonce):
-    annonce = Annonce.query.get(id_annonce)
+    Item = Item.query.get(id_annonce)
 
-    annonce.deleted = not annonce.deleted
+    Item.deleted = not Item.deleted
     db.session.commit()
     
     
@@ -315,6 +231,23 @@ def un_deleteFavorite(favorite:Favorite):
 
 
 
+#========---------Mettre Au panier
+def transfer_session_cart_to_db_cart(user_id, session_cart):
+    user_cart = CartItem.query.filter_by(user_id=user_id).first()
+    if not user_cart:
+        user_cart = CartItem(user_id=user_id)
+        db.session.add(user_cart)
+        db.session.commit()
+
+    for product_id in session_cart:
+        cart_item = CartItem.query.filter_by(cart=user_cart, annonce_id=product_id).first()
+        if cart_item:
+            cart_item.quantity += 1
+        else:
+            cart_item = CartItem(cart=user_cart, annonce_id=product_id, quantity=1)
+            db.session.add(cart_item)
+
+    db.session.commit()
 
 
 #************************************ USER REQUETES ***********************************
@@ -335,7 +268,7 @@ def ajouter_favori(favorite: Favorite):
 @app.cli.command('EldyDb')
 def init_db():
     with app.app_context():
-        # db.drop_all()
+        db.drop_all()
         db.create_all()
         
         log.warning("Base de donnees actualisee")
